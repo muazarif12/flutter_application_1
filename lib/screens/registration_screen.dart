@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
@@ -58,18 +59,18 @@ class RegistrationScreen extends StatelessWidget {
     final TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Full Name Input
+            SizedBox(height: MediaQuery.of(context).size.height*0.1,),
             TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Full Name',
+                labelStyle: GoogleFonts.exo2(),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
@@ -79,8 +80,9 @@ class RegistrationScreen extends StatelessWidget {
             // Email Input
             TextFormField(
               controller: emailController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Email',
+                labelStyle: GoogleFonts.exo2(),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
               ),
@@ -90,9 +92,10 @@ class RegistrationScreen extends StatelessWidget {
 
             // Phone Number Input
             TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Phone Number',
                 border: OutlineInputBorder(),
+                labelStyle: GoogleFonts.exo2(),
                 prefixIcon: Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
@@ -102,8 +105,9 @@ class RegistrationScreen extends StatelessWidget {
             // Password Input
             TextFormField(
               controller: passwordController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Password',
+                labelStyle: GoogleFonts.exo2(),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
@@ -113,8 +117,9 @@ class RegistrationScreen extends StatelessWidget {
 
             // Confirm Password Input
             TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Confirm Password',
+                labelStyle: GoogleFonts.exo2(),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
@@ -147,9 +152,9 @@ class RegistrationScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 backgroundColor: Colors.green, // Button color
               ),
-              child: const Text(
+              child: Text(
                 'Sign Up',
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: GoogleFonts.exo2(fontSize: 18, color: Colors.white),
               ),
             ),
             const SizedBox(height: 20),
@@ -158,13 +163,13 @@ class RegistrationScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Already have an account?"),
+                Text("Already have an account?", style: GoogleFonts.exo2(),),
                 TextButton(
                   onPressed: () {
                     // Navigate back to Login Screen
                     Navigator.pop(context);
                   },
-                  child: const Text('Login'),
+                  child: Text('Login', style: GoogleFonts.exo2(),),
                 ),
               ],
             ),

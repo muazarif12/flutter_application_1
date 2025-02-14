@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -6,25 +7,24 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Forgot Password'),
-      ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Instruction Text
-            const Text(
+            const SizedBox(height: 50,),
+            Text(
               'Enter your email address or phone number to reset your password.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: GoogleFonts.exo2(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
 
             // Email/Phone Input
             TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                labelStyle: GoogleFonts.exo2(),
                 labelText: 'Email or Phone Number',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
@@ -39,8 +39,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                 // Handle password reset logic
                 // Show a success message or navigate to a confirmation screen
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Password reset instructions sent to your email/phone.'),
+                  SnackBar(
+                    content: Text(
+                        'Password reset instructions sent to your email/phone.',
+                      style: GoogleFonts.exo2(),
+                    ),
                   ),
                 );
               },
@@ -48,9 +51,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 backgroundColor: Colors.green, // Button color
               ),
-              child: const Text(
+              child: Text(
                 'Reset Password',
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: GoogleFonts.exo2(fontSize: 18, color: Colors.white),
               ),
             ),
             const SizedBox(height: 20),
@@ -61,7 +64,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 // Navigate back to Login Screen
                 Navigator.pop(context);
               },
-              child: const Text('Back to Login'),
+              child: Text('Back to Login', style: GoogleFonts.exo2(),),
             ),
           ],
         ),

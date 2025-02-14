@@ -1,34 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.isDarkMode});
+
+  final bool isDarkMode;
+
+  final List<Map<String, dynamic>> arenas = const [
+    {
+      'name': 'Arena 1',
+      'location': 'Gulistan-e-Jauhar Block 14',
+      'rating': 4.5,
+      'price': 'Rs. 400/hr',
+      'availability': 'Limited Slots',
+      'image': 'assets/arena.jpg',
+      'tag': 'Player Favorite'
+    },
+    {
+      'name': 'Arena 2',
+      'location': 'DHA Phase 6',
+      'rating': 4.2,
+      'price': 'Rs. 350/hr',
+      'availability': 'Available',
+      'image': 'assets/sample_image2.jpg',
+      'tag': 'Newly Opened'
+    },
+    {
+      'name': 'Arena 3',
+      'location': 'North Nazimabad Block H',
+      'rating': 4.8,
+      'price': 'Rs. 500/hr',
+      'availability': 'Few Slots Left',
+      'image': 'assets/sample_image3.jpg',
+      'tag': 'Highly Rated'
+    },
+    {
+      'name': 'Arena 4',
+      'location': 'Clifton Block 5',
+      'rating': 4.0,
+      'price': 'Rs. 300/hr',
+      'availability': 'Available',
+      'image': 'assets/sample_image4.jpg',
+      'tag': 'Budget Friendly'
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        title: const Text('Arena Finder'),
-        automaticallyImplyLeading: false, // Disable back button
+        toolbarHeight: 100,
+        forceMaterialTransparency: true,
+        automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Implement search functionality
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              // Show filter options
-              _showFilterOptions(context);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Handle logout
-              _logout(context);
-            },
+          Container(
+            padding: const EdgeInsets.all(16),
+            width: MediaQuery.of(context).size.width,
+            child: TextField(
+              decoration: InputDecoration(
+                labelStyle: GoogleFonts.exo2(),
+                hintStyle: GoogleFonts.exo2(color: isDarkMode ? Colors.white: Colors.black),
+                hintText: 'Search arenas near you',
+                prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white: Colors.black ,),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -37,178 +76,28 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search arenas near you',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Location and Date & Slot Selection (DSS)
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Location',
-                      prefixIcon: const Icon(Icons.location_on),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Date & Slot',
-                      prefixIcon: const Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onTap: () {
-                      // Open date and slot picker
-                      _selectDateAndSlot(context);
-                    },
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
 
             // Arena List
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5, // Replace with actual arena count
+              itemCount: arenas.length,
               itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Cover Photo with Tag
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              'assets/arena.jpg', // Replace with actual arena image
-                              width: double.infinity,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            left: 10,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Player Favorite',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Arena Name and Location
-                            const Text(
-                              'Arena 1',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Gulistan-e-Jauhar Block 14',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-
-                            // Rating and Cost
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '4.5',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Spacer(),
-                                const Text(
-                                  'Rs. 400/hr',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Text(
-                                    'Limited Slots',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                final arena = arenas[index];
+                return _buildArenaCard(arena);
               },
             ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Set the current index for the selected tab
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        selectedLabelStyle: GoogleFonts.exo2(),
+        unselectedLabelStyle: GoogleFonts.exo2(),
+        selectedItemColor: Colors.green,
+        unselectedItemColor: isDarkMode ? Colors.white :Colors.black38,
+        currentIndex: 0,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -224,16 +113,15 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          // Handle bottom navigation bar taps
           switch (index) {
             case 0:
-              // Already on Home Screen
+              Navigator.pushReplacementNamed(context, '/home');
               break;
             case 1:
-              Navigator.pushNamed(context, '/bookings');
+              Navigator.pushReplacementNamed(context, '/bookings');
               break;
             case 2:
-              Navigator.pushNamed(context, '/settings');
+              Navigator.pushReplacementNamed(context, '/settings');
               break;
           }
         },
@@ -241,221 +129,116 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Function to show filter options
-  void _showFilterOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+  Widget _buildArenaCard(Map<String, dynamic> arena) {
+    return Card(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
             children: [
-              const Text(
-                'Filters',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  arena['image'],
+                  width: double.infinity,
+                  height: 150,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 16),
-              // Sport Type Filter
-              const Text('Sport Type'),
-              Wrap(
-                spacing: 8,
-                children: [
-                  FilterChip(
-                    label: const Text('Cricket'),
-                    onSelected: (bool value) {
-                      // Handle filter selection
-                    },
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  FilterChip(
-                    label: const Text('Football'),
-                    onSelected: (bool value) {
-                      // Handle filter selection
-                    },
-                  ),
-                  FilterChip(
-                    label: const Text('Tennis'),
-                    onSelected: (bool value) {
-                      // Handle filter selection
-                    },
-                  ),
-                  FilterChip(
-                    label: const Text('Futsal'),
-                    onSelected: (bool value) {
-                      // Handle filter selection
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Popularity Filter
-              const Text('Popularity'),
-              Slider(
-                value: 3,
-                min: 1,
-                max: 5,
-                divisions: 4,
-                label: '3',
-                onChanged: (double value) {
-                  // Handle popularity filter
-                },
-              ),
-              const SizedBox(height: 16),
-              // Price Filter
-              const Text('Price'),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButton<String>(
-                      value: 'Low to High',
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Low to High',
-                          child: Text('Low to High'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'High to Low',
-                          child: Text('High to Low'),
-                        ),
-                      ],
-                      onChanged: (String? value) {
-                        // Handle price filter
-                      },
+                  child: Text(
+                    arena['tag'],
+                    style: GoogleFonts.exo2(
+                      color: Colors.white,
+                      fontSize: 12,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Team Size Filter
-              const Text('Team Size'),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Min',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Max',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Apply Filters Button
-              ElevatedButton(
-                onPressed: () {
-                  // Apply filters and close the bottom sheet
-                  Navigator.pop(context);
-                },
-                child: const Text('Apply Filters'),
+                ),
               ),
             ],
           ),
-        );
-      },
-    );
-  }
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Arena Name and Location
+                Text(
+                  arena['name'],
+                  style: GoogleFonts.exo2(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  arena['location'],
+                  style: GoogleFonts.exo2(
+                    fontSize: 14,
+                    color: Colors.grey, // Keep grey text the same
+                  ),
+                ),
+                const SizedBox(height: 8),
 
-  // Function to select date and slot
-  void _selectDateAndSlot(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Select Date & Slot',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                // Rating and Cost
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      arena['rating'].toString(),
+                      style: GoogleFonts.exo2(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      arena['price'],
+                      style: GoogleFonts.exo2(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        arena['availability'],
+                        style: GoogleFonts.exo2(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              // Date Picker
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Select Date',
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onTap: () async {
-                  // Open date picker
-                  DateTime? selectedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (selectedDate != null) {
-                    // Handle selected date
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              // Slot Picker
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Select Slot',
-                  prefixIcon: const Icon(Icons.access_time),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onTap: () async {
-                  // Open time picker
-                  TimeOfDay? selectedTime = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (selectedTime != null) {
-                    // Handle selected time
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              // Confirm Button
-              ElevatedButton(
-                onPressed: () {
-                  // Confirm selection and close the bottom sheet
-                  Navigator.pop(context);
-                },
-                child: const Text('Confirm'),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
-  }
-
-  // Function to handle logout
-  void _logout(BuildContext context) {
-    // Perform logout logic (e.g., clear user session)
-    // Navigate back to the Login Screen
-    Navigator.pushReplacementNamed(context, '/login');
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/bookings_screen.dart';
+import 'package:flutter_application_1/screens/settings.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/registration_screen.dart';
@@ -28,7 +30,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegistrationScreen(), // Registration Screen route
         '/forgot-password': (context) => const ForgotPasswordScreen(), // Forgot Password Screen route
         '/terms-and-conditions': (context) => const TermsAndConditionsScreen(), // Terms and Conditions Screen route
-        '/home': (context) => const HomeScreen(), // Home Screen route
+        '/home': (context) => const HomeScreen(isDarkMode: true,),
+        '/settings': (context) => const SettingsScreen(),
+        '/bookings': (context) => const ListingsPage(),
       },
     );
   }
