@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'arena_details_screen.dart'; // Import the Arena Details Screen
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.isDarkMode});
@@ -60,9 +61,9 @@ class HomeScreen extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 labelStyle: GoogleFonts.exo2(),
-                hintStyle: GoogleFonts.exo2(color: isDarkMode ? Colors.white: Colors.black),
+                hintStyle: GoogleFonts.exo2(color: isDarkMode ? Colors.white : Colors.black),
                 hintText: 'Search arenas near you',
-                prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white: Colors.black ,),
+                prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white : Colors.black),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -85,7 +86,7 @@ class HomeScreen extends StatelessWidget {
               itemCount: arenas.length,
               itemBuilder: (context, index) {
                 final arena = arenas[index];
-                return _buildArenaCard(arena);
+                return _buildArenaCard(context, arena); // Pass context here
               },
             ),
           ],
@@ -96,7 +97,7 @@ class HomeScreen extends StatelessWidget {
         selectedLabelStyle: GoogleFonts.exo2(),
         unselectedLabelStyle: GoogleFonts.exo2(),
         selectedItemColor: Colors.green,
-        unselectedItemColor: isDarkMode ? Colors.white :Colors.black38,
+        unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
         currentIndex: 0,
         items: const [
           BottomNavigationBarItem(
@@ -129,115 +130,125 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildArenaCard(Map<String, dynamic> arena) {
-    return Card(
-      color: isDarkMode ? Colors.grey[850] : Colors.white,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  arena['image'],
-                  width: double.infinity,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    arena['tag'],
-                    style: GoogleFonts.exo2(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+  Widget _buildArenaCard(BuildContext context, Map<String, dynamic> arena) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArenaDetailsScreen(arena: arena),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Card(
+        color: isDarkMode ? Colors.grey[850] : Colors.white,
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                // Arena Name and Location
-                Text(
-                  arena['name'],
-                  style: GoogleFonts.exo2(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    arena['image'],
+                    width: double.infinity,
+                    height: 150,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  arena['location'],
-                  style: GoogleFonts.exo2(
-                    fontSize: 14,
-                    color: Colors.grey, // Keep grey text the same
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      arena['tag'],
+                      style: GoogleFonts.exo2(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-
-                // Rating and Cost
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      arena['rating'].toString(),
-                      style: GoogleFonts.exo2(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      arena['price'],
-                      style: GoogleFonts.exo2(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        arena['availability'],
-                        style: GoogleFonts.exo2(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Arena Name and Location
+                  Text(
+                    arena['name'],
+                    style: GoogleFonts.exo2(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    arena['location'],
+                    style: GoogleFonts.exo2(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Rating and Cost
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        arena['rating'].toString(),
+                        style: GoogleFonts.exo2(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        arena['price'],
+                        style: GoogleFonts.exo2(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          arena['availability'],
+                          style: GoogleFonts.exo2(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

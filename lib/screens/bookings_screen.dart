@@ -24,13 +24,7 @@ class ListingsPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Action for adding a new listing
-        },
-        backgroundColor: Colors.green,
-        child: Icon(Icons.add, color: Colors.white),
-      ),
+      
       bottomNavigationBar: BottomNavigationBar(
         selectedLabelStyle: GoogleFonts.exo2(),
         unselectedLabelStyle: GoogleFonts.exo2(),
