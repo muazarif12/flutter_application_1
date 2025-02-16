@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'arena_details_screen.dart'; // Import the Arena Details Screen
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/theme/theme_bloc.dart';
+import '../bloc/theme/theme_state.dart';
+import 'arena_details_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.isDarkMode});
+class HomeScreen extends StatefulWidget {
+  final Function(int) onTabTapped;
+  final int currentIndex;
 
-  final bool isDarkMode;
+  const HomeScreen({super.key, required this.onTabTapped, required this.currentIndex});
 
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> {
   final List<Map<String, dynamic>> arenas = const [
     {
       'name': 'Arena 1',
@@ -48,9 +56,20 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
+
+    // Ensure system UI updates when navigating to this screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        context.read<ThemeBloc>().setSystemUI();
+      }
+    });
+
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
         toolbarHeight: 100,
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
@@ -60,8 +79,8 @@ class HomeScreen extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             child: TextField(
               decoration: InputDecoration(
-                labelStyle: GoogleFonts.exo2(),
-                hintStyle: GoogleFonts.exo2(color: isDarkMode ? Colors.white : Colors.black),
+                labelStyle: const TextStyle(fontFamily: 'Exo2'),
+                hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black,fontFamily: 'Exo2'),
                 hintText: 'Search arenas near you',
                 prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white : Colors.black),
                 border: OutlineInputBorder(
@@ -86,51 +105,16 @@ class HomeScreen extends StatelessWidget {
               itemCount: arenas.length,
               itemBuilder: (context, index) {
                 final arena = arenas[index];
-                return _buildArenaCard(context, arena); // Pass context here
+                return _buildArenaCard(context, arena, isDarkMode);
               },
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
-        selectedLabelStyle: GoogleFonts.exo2(),
-        unselectedLabelStyle: GoogleFonts.exo2(),
-        selectedItemColor: Colors.green,
-        unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/bookings');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/settings');
-              break;
-          }
-        },
-      ),
     );
   }
 
-  Widget _buildArenaCard(BuildContext context, Map<String, dynamic> arena) {
+  Widget _buildArenaCard(BuildContext context, Map<String, dynamic> arena, bool isDarkMode) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -168,9 +152,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: Text(
                       arena['tag'],
-                      style: GoogleFonts.exo2(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
+                        fontFamily: 'Exo2',
                       ),
                     ),
                   ),
@@ -185,18 +170,20 @@ class HomeScreen extends StatelessWidget {
                   // Arena Name and Location
                   Text(
                     arena['name'],
-                    style: GoogleFonts.exo2(
+                    style:TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: isDarkMode ? Colors.white : Colors.black,
+                      fontFamily: 'Exo2',
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     arena['location'],
-                    style: GoogleFonts.exo2(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
+                      fontFamily: 'Exo2',
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -212,19 +199,21 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         arena['rating'].toString(),
-                        style: GoogleFonts.exo2(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isDarkMode ? Colors.white : Colors.black,
+                          fontFamily: 'Exo2',
                         ),
                       ),
                       const Spacer(),
                       Text(
                         arena['price'],
-                        style: GoogleFonts.exo2(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isDarkMode ? Colors.white : Colors.black,
+                          fontFamily: 'Exo2',
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -236,9 +225,10 @@ class HomeScreen extends StatelessWidget {
                         ),
                         child: Text(
                           arena['availability'],
-                          style: GoogleFonts.exo2(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
+                            fontFamily: 'Exo2',
                           ),
                         ),
                       ),

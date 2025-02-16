@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -16,7 +16,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             const SizedBox(height: 50,),
             Text(
               'Enter your email address or phone number to reset your password.',
-              style: GoogleFonts.exo2(fontSize: 16, color: Colors.grey),
+              style: TextStyle(fontSize: 16, color: Colors.grey,fontFamily: 'Exo2'),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -24,7 +24,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             // Email/Phone Input
             TextFormField(
               decoration: InputDecoration(
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2'),
                 labelText: 'Email or Phone Number',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
@@ -42,7 +42,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   SnackBar(
                     content: Text(
                         'Password reset instructions sent to your email/phone.',
-                      style: GoogleFonts.exo2(),
+                      style: TextStyle(fontFamily: 'Exo2'),
                     ),
                   ),
                 );
@@ -53,7 +53,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
               child: Text(
                 'Reset Password',
-                style: GoogleFonts.exo2(fontSize: 18, color: Colors.white),
+                style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: 'Exo2'),
               ),
             ),
             const SizedBox(height: 20),
@@ -64,7 +64,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 // Navigate back to Login Screen
                 Navigator.pop(context);
               },
-              child: Text('Back to Login', style: GoogleFonts.exo2(),),
+              child: Text('Back to Login', style: TextStyle(fontFamily: 'Exo2'),),
             ),
           ],
         ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
 
-  // Function to show Terms and Conditions Dialog
   void _showTermsAndConditionsDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -70,7 +69,7 @@ class RegistrationScreen extends StatelessWidget {
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Full Name',
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
@@ -82,7 +81,7 @@ class RegistrationScreen extends StatelessWidget {
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
               ),
@@ -95,7 +94,7 @@ class RegistrationScreen extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Phone Number',
                 border: OutlineInputBorder(),
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 prefixIcon: Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
@@ -107,7 +106,7 @@ class RegistrationScreen extends StatelessWidget {
               controller: passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
@@ -119,7 +118,7 @@ class RegistrationScreen extends StatelessWidget {
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
-                labelStyle: GoogleFonts.exo2(),
+                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
@@ -137,15 +136,17 @@ class RegistrationScreen extends StatelessWidget {
                 );
 
                 if (registrationSuccess) {
-                  // Show Terms and Conditions Dialog
-                  _showTermsAndConditionsDialog(context);
+                  if (context.mounted) {
+                    _showTermsAndConditionsDialog(context);
+                  }
                 } else {
-                  // Show error message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Registration failed. Please try again.'),
-                    ),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Registration failed. Please try again.'),
+                      ),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -154,7 +155,7 @@ class RegistrationScreen extends StatelessWidget {
               ),
               child: Text(
                 'Sign Up',
-                style: GoogleFonts.exo2(fontSize: 18, color: Colors.white),
+                style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: 'Exo2',),
               ),
             ),
             const SizedBox(height: 20),
@@ -163,13 +164,13 @@ class RegistrationScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account?", style: GoogleFonts.exo2(),),
+                Text("Already have an account?", style: TextStyle(fontFamily: 'Exo2',),),
                 TextButton(
                   onPressed: () {
                     // Navigate back to Login Screen
                     Navigator.pop(context);
                   },
-                  child: Text('Login', style: GoogleFonts.exo2(),),
+                  child: Text('Login', style: TextStyle(fontFamily: 'Exo2',),),
                 ),
               ],
             ),

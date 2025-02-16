@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'arena_booking_screen.dart'; // Import the Arena Booking Screen
+import '../bloc/theme/theme_bloc.dart';
+import '../bloc/theme/theme_state.dart';
+import 'arena_booking_screen.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ArenaDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> arena;
@@ -10,21 +13,35 @@ class ArenaDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
+
+    // Ensure system UI updates after the screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        context.read<ThemeBloc>().setSystemUI();
+      }
+    });
+
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
+        centerTitle: true,
+        forceMaterialTransparency: true,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
         title: Text(
           arena['name'],
-          style: GoogleFonts.exo2(),
+          style: TextStyle(fontFamily: 'Exo2', fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode? Colors.white:Colors.black),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share,color: isDarkMode? Colors.white:Colors.black),
             onPressed: () {
               _shareArena(context);
             },
           ),
           IconButton(
-            icon: const Icon(Icons.favorite_border),
+            icon: Icon(Icons.favorite_border, color: isDarkMode? Colors.white:Colors.black),
             onPressed: () {
               _addToFavorites(context);
             },
@@ -32,132 +49,75 @@ class ArenaDetailsScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Multiple Photos and Video (Sliding Behavior)
-            SizedBox(
-              height: 200,
-              child: PageView.builder(
-                itemCount: 3, // Replace with actual number of images/videos
-                itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      arena['image'],
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Arena Name and Location
-            Text(
-              arena['name'],
-              style: GoogleFonts.exo2(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                _openGoogleMaps(arena['location']);
-              },
-              child: Text(
-                arena['location'],
-                style: GoogleFonts.exo2(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+            // **Image Slider**
+            Hero(
+              tag: arena['image'],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    aspectRatio: 16 / 9,
+                  ),
+                  items: [
+                    arena['image'],
+                    'assets/sample_image2.jpg',
+                    'assets/sample_image3.jpg'
+                  ].map((image) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(image, fit: BoxFit.cover, width: double.infinity),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
 
-            // Brief Description and Owner
-            Text(
-              'Description:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This is a brief description of the arena. It is a great place for sports enthusiasts. The owner is John Doe.',
-              style: GoogleFonts.exo2(
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
 
-            // Overall Rating
+            // **Location & Google Maps Button**
+            _sectionHeader('Location', isDarkMode),
+            const SizedBox(height: 6),
             Row(
               children: [
-                const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                  size: 24,
-                ),
+                const Icon(Icons.location_on, color: Colors.blue),
                 const SizedBox(width: 8),
-                Text(
-                  arena['rating'].toString(),
-                  style: GoogleFonts.exo2(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _openGoogleMaps(arena['location']);
+                    },
+                    child: Text(
+                      arena['location'],
+                      style: const TextStyle(fontSize: 16, color: Colors.blue, decoration: TextDecoration.underline),
+                    ),
                   ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _openGoogleMaps(arena['location']),
+                  icon: const Icon(Icons.map),
+                  label: const Text("Open Maps"),
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
 
-            // Timings and Pricing
-            Text(
-              'Timings & Pricing:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000',
-              style: GoogleFonts.exo2(
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 20),
+            // **Arena Information**
+            _infoCard('Description', 'This is a great place for sports lovers. The owner is John Doe.', isDarkMode),
+            _infoCard('Timings & Pricing', 'Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000', isDarkMode),
+            _infoCard('Pricing Details', 'Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr', isDarkMode),
 
-            // Pre-Tax and Post-Tax Prices
-            Text(
-              'Pricing Details:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr',
-              style: GoogleFonts.exo2(
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Facilities
-            Text(
-              'Facilities:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // **Facilities**
+            _sectionHeader('Facilities', isDarkMode),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -168,87 +128,79 @@ class ArenaDetailsScreen extends StatelessWidget {
                 Chip(label: Text('Wi-Fi')),
               ],
             ),
-            const SizedBox(height: 20),
 
-            // Recent Reviews
-            Text(
-              'Recent Reviews:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+            const SizedBox(height: 16),
+
+            // **Overall Rating**
+            _sectionHeader('Rating', isDarkMode),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Colors.amber, size: 24),
+                const SizedBox(width: 8),
                 Text(
-                  'John Doe: "Great place to play cricket!"',
-                  style: TextStyle(fontSize: 14),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Jane Smith: "Well-maintained facilities."',
-                  style: TextStyle(fontSize: 14),
+                  arena['rating'].toString(),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.grey),
                 ),
               ],
             ),
+
+            const SizedBox(height: 16),
+
+            // **Recent Reviews**
+            _sectionHeader('Recent Reviews', isDarkMode),
+            const SizedBox(height: 6),
+            _reviewItem('John Doe', 'Great place to play cricket!'),
+            _reviewItem('Jane Smith', 'Well-maintained facilities.'),
+
             const SizedBox(height: 20),
 
-            // Cancellation Policy
-            Text(
-              'Cancellation Policy:',
-              style: GoogleFonts.exo2(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Cancellations must be made 24 hours before the booking time.',
-              style: GoogleFonts.exo2(
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 20),
+            // **Cancellation Policy**
+            _sectionHeader('Cancellation Policy', isDarkMode),
+            const SizedBox(height: 6),
+            _infoCard('Policy', 'Cancellations must be made 24 hours before the booking time.', isDarkMode),
 
-            // Support and Booking Options
+            const SizedBox(height: 16),
+
+            // **Support & Booking Options**
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       _contactSupport(context);
                     },
-                    child: const Text('Talk to Support'),
+                    icon: const Icon(Icons.support_agent),
+                    label: const Text('Talk to Support'),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
-                      // Navigate to Arena Booking Screen
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => ArenaBookingScreen(arena: arena),
-                        ),
+                        MaterialPageRoute(builder: (context) => ArenaBookingScreen(arena: arena)),
                       );
                     },
-                    child: const Text('Book Now'),
+                    icon: const Icon(Icons.calendar_today),
+                    label: const Text('Book Now'),
                   ),
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
 
-            // Join Community (if applicable)
+            // **Join Community Button**
             if (arena['communityExists'] == true)
-              ElevatedButton(
-                onPressed: () {
-                  _joinCommunity(context);
-                },
-                child: const Text('Join Community'),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _joinCommunity(context);
+                  },
+                  icon: const Icon(Icons.group),
+                  label: const Text('Join Community'),
+                ),
               ),
           ],
         ),
@@ -256,11 +208,45 @@ class ArenaDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Function to open Google Maps
-  void _openGoogleMaps(String location) async {
-    final Uri googleMapsUrl = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=$location',
+  // **Reusable Widgets for UI Enhancements**
+  Widget _sectionHeader(String title, bool isDarkMode) {
+    return Text(
+      title,
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDarkMode? Colors.white: Colors.black),
     );
+  }
+
+  Widget _infoCard(String title, String description, bool isDarkMode) {
+    return Card(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black,)),
+              const SizedBox(height: 6),
+              Text(description, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _reviewItem(String user, String review) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text('$user: "$review"', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+    );
+  }
+
+  // **Functions**
+  void _openGoogleMaps(String location) async {
+    final Uri googleMapsUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=$location');
     if (await canLaunchUrl(googleMapsUrl)) {
       await launchUrl(googleMapsUrl);
     } else {
@@ -268,44 +254,19 @@ class ArenaDetailsScreen extends StatelessWidget {
     }
   }
 
-  // Function to share arena details
   void _shareArena(BuildContext context) {
-    // Implement share functionality (e.g., using the share package)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Share functionality not implemented yet.'),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share functionality not implemented yet.')));
   }
 
-  // Function to add arena to favorites
   void _addToFavorites(BuildContext context) {
-    // Implement add to favorites functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Added to favorites!'),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Added to favorites!')));
   }
 
-  // Function to contact support
   void _contactSupport(BuildContext context) {
-    // Implement contact support functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Contact support functionality not implemented yet.'),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Contact support functionality not implemented yet.')));
   }
 
-  // Function to join community
   void _joinCommunity(BuildContext context) {
-    // Implement join community functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Join community functionality not implemented yet.'),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Join community functionality not implemented yet.')));
   }
 }
-

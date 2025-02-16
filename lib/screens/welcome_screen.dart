@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -41,10 +41,11 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       Text(
                         "Explore a Variety of Venues",
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.exo2(
+                        style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.green,
+                          fontFamily: 'Exo2'
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -53,9 +54,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       Text(
                         "Find sports venues and activities that suit your liking",
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.exo2(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
+                          fontFamily: 'Exo2'
                         ),
                       ),
                     ],
@@ -86,10 +88,11 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
+                fontFamily: 'Exo2'
               ),
             ),
             Image.asset(image),
@@ -97,9 +100,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
+                fontFamily: 'Exo2',
               ),
             ),
           ],
@@ -118,10 +122,11 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
+                fontFamily: 'Exo2'
               ),
             ),
             const SizedBox(height: 20),
@@ -130,9 +135,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
+                fontFamily: 'Exo2'
               ),
             ),
             const SizedBox(height: 40),
@@ -149,9 +155,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               ),
               child: Text(
                 "Let's Get Started",
-                style: GoogleFonts.exo2(
+                style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white,
+                  fontFamily: 'Exo2'
                 ),
               ),
             ),

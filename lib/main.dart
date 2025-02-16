@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/bookings_screen.dart';
-import 'package:flutter_application_1/screens/settings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/theme/theme_bloc.dart';
+import 'bloc/theme/theme_state.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/registration_screen.dart';
 import 'screens/forgot_password_screen.dart';
 import 'screens/terms_and_conditions_screen.dart';
-import 'screens/home_screen.dart'; // Import the Home Screen
+import 'screens/home_screen.dart';
+import 'screens/bookings_screen.dart';
+import 'screens/settings.dart';
 
 void main() {
-  runApp(const MyApp());
+  final themeBloc = ThemeBloc();
+  themeBloc.setSystemUI();
+
+  runApp(
+    BlocProvider(
+      create: (context) => themeBloc,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,23 +29,110 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Arena Finder',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const WelcomeScreen(),
-      routes: {
-        '/login': (context) => const LoginScreen(), // Login Screen route
-        '/register': (context) => const RegistrationScreen(), // Registration Screen route
-        '/forgot-password': (context) => const ForgotPasswordScreen(), // Forgot Password Screen route
-        '/terms-and-conditions': (context) => const TermsAndConditionsScreen(), // Terms and Conditions Screen route
-        '/home': (context) => const HomeScreen(isDarkMode: true,),
-        '/settings': (context) => const SettingsScreen(),
-        '/bookings': (context) => const ListingsPage(),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Arena Finder',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+            useMaterial3: true,
+            fontFamily: 'Exo2'
+          ),
+          home: const WelcomeScreen(),
+          routes: {
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegistrationScreen(),
+            '/forgot-password': (context) => const ForgotPasswordScreen(),
+            '/terms-and-conditions': (context) => const TermsAndConditionsScreen(),
+            '/home': (context) => const MainScreen(), // Use `MainScreen` for indexed navigation
+          },
+        );
       },
     );
   }
 }
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  MainScreenState createState() => MainScreenState();
+}
+
+class MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0; // Default to Home screen
+
+  late final List<Widget> _screens; // Declare screens list
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeScreen(
+        onTabTapped: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        currentIndex: _currentIndex,
+      ),
+      ListingsPage(
+        onTabTapped: (index) {
+          setState(() {
+            _currentIndex = index; // Update selected tab
+          });
+        },
+        currentIndex: _currentIndex,
+      ),
+      const SettingsScreen(),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
+
+    // Ensure system UI updates when this screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        context.read<ThemeBloc>().setSystemUI();
+      }
+    });
+
+    return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens, // Use declared screens list
+      ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent, // Removes splash effect
+          highlightColor: Colors.transparent, // Removes highlight effect
+          hoverColor: Colors.transparent, // Removes hover effect
+        ),
+        child: BottomNavigationBar(
+          selectedLabelStyle: const TextStyle(fontFamily:'Exo2'),
+          unselectedLabelStyle: const TextStyle(fontFamily:'Exo2'),
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index; // Update selected tab
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.book), label: "Bookings"),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
