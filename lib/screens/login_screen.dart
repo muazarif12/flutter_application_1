@@ -71,24 +71,26 @@ class LoginScreen extends StatelessWidget {
               // Login Button
               ElevatedButton(
                 onPressed: () async {
-                  // Perform login logic
-                  bool loginSuccess = await loginUser(
-                    email: emailController.text,
-                    password: passwordController.text,
-                  );
+  final userData = await loginUser(
+    email: emailController.text,
+    password: passwordController.text,
+  );
 
-                  if (loginSuccess) {
-                    // Navigate to Home Screen
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else {
-                    // Show error message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Login failed. Please try again.'),
-                      ),
-                    );
-                  }
-                },
+  if (userData != null) {
+    String role = userData['role'];
+    if (role == 'user') {
+      Navigator.pushReplacementNamed(context, '/home'); // Regular user home screen
+    } else if (role == 'host') {
+      Navigator.pushReplacementNamed(context, '/host-home'); // Host dashboard
+    }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Login failed. Please try again.'),
+      ),
+    );
+  }
+},
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   backgroundColor: Colors.green, // Button color
@@ -176,7 +178,22 @@ class LoginScreen extends StatelessWidget {
 }
 
 // Dummy login function for demonstration
-Future<bool> loginUser({required String email, required String password}) async {
+Future<Map<String, dynamic>?> loginUser({required String email, required String password}) async {
+  // Simulate fetching user details from a backend
   await Future.delayed(const Duration(seconds: 2));
-  return email == "test" && password == "123";
+
+  // Dummy users with email, password, and role
+  final List<Map<String, dynamic>> users = [
+    {'email': 'user', 'password': '123', 'role': 'user'},
+    {'email': 'host', 'password': '123', 'role': 'host'},
+  ];
+
+  // Check if the entered credentials match any user
+  for (var user in users) {
+    if (user['email'] == email && user['password'] == password) {
+      return {'role': user['role']}; // Return the role if credentials match
+    }
+  }
+
+  return null; // Return null for invalid credentials
 }

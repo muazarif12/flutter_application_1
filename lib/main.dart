@@ -11,7 +11,9 @@ import 'screens/terms_and_conditions_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/bookings_screen.dart';
 import 'screens/settings.dart';
-
+import 'screens/host_main_screen.dart';
+import 'screens/add_arena_screen.dart';
+import 'screens/edit_arena_screen.dart';
 void main() {
   final themeBloc = ThemeBloc();
   themeBloc.setSystemUI();
@@ -46,6 +48,9 @@ class MyApp extends StatelessWidget {
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/terms-and-conditions': (context) => const TermsAndConditionsScreen(),
             '/home': (context) => const MainScreen(), // Use `MainScreen` for indexed navigation
+            '/host-home': (context) => const HostMainScreen(),
+            '/add-arena': (context) => const AddArenaScreen(),
+            '/edit-arena': (context) => const EditArenaScreen(arena: {}),
           },
         );
       },
@@ -66,28 +71,21 @@ class MainScreenState extends State<MainScreen> {
   late final List<Widget> _screens; // Declare screens list
 
   @override
-  void initState() {
-    super.initState();
-    _screens = [
-      HomeScreen(
-        onTabTapped: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        currentIndex: _currentIndex,
-      ),
-      ListingsPage(
-        onTabTapped: (index) {
-          setState(() {
-            _currentIndex = index; // Update selected tab
-          });
-        },
-        currentIndex: _currentIndex,
-      ),
-      const SettingsScreen(),
-    ];
-  }
+void initState() {
+  super.initState();
+  _screens = [
+    HomeScreen(
+      onTabTapped: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      currentIndex: _currentIndex,
+    ),
+    BookingsScreen(), // Change ListingsPage to BookingsScreen
+    const SettingsScreen(),
+  ];
+}
 
   @override
   Widget build(BuildContext context) {
