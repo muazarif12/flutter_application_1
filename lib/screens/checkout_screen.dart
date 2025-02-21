@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/theme/theme_bloc.dart';
+import '../bloc/theme/theme_state.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final Map<String, dynamic> bookingDetails;
@@ -30,9 +34,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        title: const Text('Checkout'),
+        forceMaterialTransparency: true,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Checkout',  style: TextStyle(fontFamily: 'Exo2', fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode? Colors.white:Colors.black),),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -42,15 +58,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               // **Payment Method Selection**
               _card(
+                isDarkMode: isDarkMode,
                 title: 'Select Payment Method',
                 child: Column(
                   children: _paymentMethods.map((method) {
                     return RadioListTile<String>(
+                      activeColor: Colors.green,
                       title: Row(
                         children: [
                           Icon(method['icon'], size: 28, color: Colors.green), // Placeholder icons
                           const SizedBox(width: 10),
-                          Text(method['name'], style: const TextStyle(fontSize: 16)),
+                          Text(method['name'], style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black)),
                         ],
                       ),
                       value: method['name'],
@@ -68,6 +86,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               // **Card Details (Shown only if PayPro is selected)**
               if (_selectedPaymentMethod == 'PayPro')
                 _card(
+                  isDarkMode: isDarkMode,
                   title: 'Enter Card Details',
                   child: Column(
                     children: [
@@ -82,16 +101,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
               // **Transaction Summary**
               _card(
+                isDarkMode: isDarkMode,
                 title: 'Transaction Summary',
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _summaryItem('Arena', widget.bookingDetails['arenaName']),
-                    _summaryItem('Sport', widget.bookingDetails['sport']),
-                    _summaryItem('Date', widget.bookingDetails['date']),
-                    _summaryItem('Slot', widget.bookingDetails['slot']),
-                    _summaryItem('Team Size', widget.bookingDetails['teamSize'].toString()),
-                    _summaryItem('Court Type', widget.bookingDetails['isHalfCourt'] ? 'Half Court' : 'Full Court'),
+                    _summaryItem('Arena', widget.bookingDetails['arenaName'], isDarkMode),
+                    _summaryItem('Sport', widget.bookingDetails['sport'], isDarkMode),
+                    _summaryItem('Date', widget.bookingDetails['date'], isDarkMode),
+                    _summaryItem('Slot', widget.bookingDetails['slot'], isDarkMode),
+                    _summaryItem('Team Size', widget.bookingDetails['teamSize'].toString(), isDarkMode),
+                    _summaryItem('Court Type', widget.bookingDetails['isHalfCourt'] ? 'Half Court' : 'Full Court', isDarkMode),
                   ],
                 ),
               ),
@@ -126,9 +146,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // **Reusable Card Wrapper**
-  Widget _card({required String title, required Widget child}) {
+  Widget _card({required String title, required Widget child, required bool isDarkMode}) {
     return Card(
       elevation: 3,
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -136,7 +157,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
             const Divider(),
             child,
           ],
@@ -159,7 +180,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon),
+        prefixIcon: Icon(icon, color: Colors.green,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -167,14 +188,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // **Transaction Summary Item**
-  Widget _summaryItem(String title, String value) {
+  Widget _summaryItem(String title, String value, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+          Text(value, style: const TextStyle(color: Colors.green),),
         ],
       ),
     );

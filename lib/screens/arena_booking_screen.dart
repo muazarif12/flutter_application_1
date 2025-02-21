@@ -44,6 +44,12 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ) ,
         centerTitle: true,
         forceMaterialTransparency: true,
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -153,6 +159,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 isDarkMode: isDarkMode,
                 title: 'Additional Preferences',
                 child: CheckboxListTile(
+                  activeColor: Colors.green,
                   title: Text('Send request for teammates', style: TextStyle(fontFamily: 'Exo2',color: isDarkMode?Colors.white:Colors.black)),
                   value: _sendTeammateRequest,
                   onChanged: (value) {
@@ -172,7 +179,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                   icon: const Icon(Icons.check_circle),
                   label: const Text(
                     'Book Now',
-                    style: TextStyle(fontFamily: 'Exo2', fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontFamily: 'Exo2', fontSize: 16, fontWeight: FontWeight.bold,),
                   ),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -228,7 +235,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         Row(
           children: [
             Text(value ? activeText : inactiveText, style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white:Colors.black)),
-            Switch(value: value, onChanged: onChanged),
+            Switch(value: value, onChanged: onChanged, activeColor: Colors.green,),
           ],
         ),
       ],
@@ -244,7 +251,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color:isDarkMode? Colors.white : Colors.black ,),
+        prefixIcon: Icon(icon, color: Colors.green ,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -261,11 +268,13 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
     required bool isDarkMode,
   }) {
     return DropdownButtonFormField<String>(
+      dropdownColor: isDarkMode? Colors.black: Colors.white,
+      style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
       value: value?.toString(),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color: isDarkMode? Colors.white:Colors.black,),
+        prefixIcon: Icon(icon, color: Colors.green,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
@@ -277,12 +286,13 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
   // **Date Picker Field**
   Widget _datePickerField(bool isDarkMode) {
     return TextFormField(
+      style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
       controller: _dateController,
       readOnly: true,
       decoration: InputDecoration(
         labelText: 'Select Date',
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(Icons.calendar_today, color: isDarkMode? Colors.white: Colors.black,),
+        prefixIcon: Icon(Icons.calendar_today, color: Colors.green,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onTap: () async {

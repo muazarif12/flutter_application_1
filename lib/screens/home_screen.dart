@@ -178,13 +178,18 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    arena['location'],
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                      fontFamily: 'Exo2',
-                    ),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, color: Colors.blue,size: 16,),
+                      Text(
+                        arena['location'],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.green,
+                          fontFamily: 'Exo2',
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
 

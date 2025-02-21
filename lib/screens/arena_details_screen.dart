@@ -16,16 +16,15 @@ class ArenaDetailsScreen extends StatelessWidget {
     final themeState = context.watch<ThemeBloc>().state;
     final bool isDarkMode = themeState is DarkThemeState;
 
-    // Ensure system UI updates after the screen is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        context.read<ThemeBloc>().setSystemUI();
-      }
-    });
-
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: true,
         forceMaterialTransparency: true,
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -49,9 +48,8 @@ class ArenaDetailsScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // **Image Slider**
             Hero(
@@ -81,15 +79,35 @@ class ArenaDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // **Location & Google Maps Button**
-            _sectionHeader('Location', isDarkMode),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                const Icon(Icons.location_on, color: Colors.blue),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: GestureDetector(
+            // **Rating Section**
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Rating',
+              child: Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 24),
+                  const Icon(Icons.star, color: Colors.amber, size: 24),
+                  const Icon(Icons.star, color: Colors.amber, size: 24),
+                  const Icon(Icons.star, color: Colors.amber, size: 24),
+                  const Icon(Icons.star_half_outlined, color: Colors.amber, size: 24),
+                  const SizedBox(width: 8),
+                  // Text(
+                  //   arena['rating'].toString(),
+                  //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black),
+                  // ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // **Location Section**
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Location',
+              child: Column(
+                children: [
+                  GestureDetector(
                     onTap: () {
                       _openGoogleMaps(arena['location']);
                     },
@@ -98,99 +116,118 @@ class ArenaDetailsScreen extends StatelessWidget {
                       style: const TextStyle(fontSize: 16, color: Colors.blue, decoration: TextDecoration.underline),
                     ),
                   ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => _openGoogleMaps(arena['location']),
-                  icon: const Icon(Icons.map),
-                  label: const Text("Open Maps"),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () => _openGoogleMaps(arena['location']),
+                    icon: Icon(Icons.map,color: Colors.green[900]),
+                    label: Text("Open in Maps", style: TextStyle(color:Colors.green[900]),),
+                  ),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             // **Arena Information**
-            _infoCard('Description', 'This is a great place for sports lovers. The owner is John Doe.', isDarkMode),
-            _infoCard('Timings & Pricing', 'Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000', isDarkMode),
-            _infoCard('Pricing Details', 'Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr', isDarkMode),
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Description',
+              child: Text('This is a great place for sports lovers. The owner is John Doe.', style: TextStyle(color: Colors.green)),
+            ),
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Timings & Pricing',
+              child: Text('Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000', style: TextStyle(color: Colors.green)),
+            ),
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Pricing Details',
+              child: Text('Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr', style: TextStyle(color: Colors.green)),
+            ),
 
             const SizedBox(height: 16),
 
             // **Facilities**
-            _sectionHeader('Facilities', isDarkMode),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: const [
-                Chip(label: Text('Cafeteria')),
-                Chip(label: Text('Showers')),
-                Chip(label: Text('Parking')),
-                Chip(label: Text('Wi-Fi')),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // **Overall Rating**
-            _sectionHeader('Rating', isDarkMode),
-            Row(
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  arena['rating'].toString(),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.grey),
-                ),
-              ],
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Facilities',
+              child: Wrap(
+                spacing: 8,
+                children: const [
+                  Chip(label: Text('Cafeteria')),
+                  Chip(label: Text('Showers')),
+                  Chip(label: Text('Parking')),
+                  Chip(label: Text('Wi-Fi')),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
 
             // **Recent Reviews**
-            _sectionHeader('Recent Reviews', isDarkMode),
-            const SizedBox(height: 6),
-            _reviewItem('John Doe', 'Great place to play cricket!'),
-            _reviewItem('Jane Smith', 'Well-maintained facilities.'),
-
-            const SizedBox(height: 20),
-
-            // **Cancellation Policy**
-            _sectionHeader('Cancellation Policy', isDarkMode),
-            const SizedBox(height: 6),
-            _infoCard('Policy', 'Cancellations must be made 24 hours before the booking time.', isDarkMode),
-
-            const SizedBox(height: 16),
-
-            // **Support & Booking Options**
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      _contactSupport(context);
-                    },
-                    icon: const Icon(Icons.support_agent),
-                    label: const Text('Talk to Support'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ArenaBookingScreen(arena: arena)),
-                      );
-                    },
-                    icon: const Icon(Icons.calendar_today),
-                    label: const Text('Book Now'),
-                  ),
-                ),
-              ],
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Recent Reviews',
+              child: Column(
+                children: [
+                  _reviewItem('John Doe', 'Great place to play cricket!', isDarkMode),
+                  _reviewItem('Jane Smith', 'Well-maintained facilities.', isDarkMode),
+                ],
+              ),
             ),
 
             const SizedBox(height: 20),
 
+            // **Cancellation Policy**
+            _card(
+              isDarkMode: isDarkMode,
+              title: 'Cancellation Policy',
+              child: Text('Cancellations must be made 24 hours before the booking time.', style: TextStyle(color: Colors.green)),
+            ),
+
+            const SizedBox(height: 16),
+
+            // **Support & Booking Options**
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.calendar_today,color: Colors.green[900]),
+                label: Text(
+                  'Book Now',
+                  style: TextStyle(fontFamily: 'Exo2', fontSize: 16, fontWeight: FontWeight.bold,color: Colors.green[900]),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ArenaBookingScreen(arena: arena)),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 15,),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.support_agent,color: Colors.green[900]),
+                label: Text(
+                  'Talk to Support',
+                  style: TextStyle(fontFamily: 'Exo2', fontSize: 16, fontWeight: FontWeight.bold,color: Colors.green[900]),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                },
+              ),
+            ),
             // **Join Community Button**
             if (arena['communityExists'] == true)
               Center(
@@ -209,38 +246,34 @@ class ArenaDetailsScreen extends StatelessWidget {
   }
 
   // **Reusable Widgets for UI Enhancements**
-  Widget _sectionHeader(String title, bool isDarkMode) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDarkMode? Colors.white: Colors.black),
-    );
-  }
-
-  Widget _infoCard(String title, String description, bool isDarkMode) {
+  Widget _card({
+    required String title,
+    required Widget child,
+    required bool isDarkMode,
+  }) {
     return Card(
       color: isDarkMode ? Colors.grey[850] : Colors.white,
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black,)),
-              const SizedBox(height: 6),
-              Text(description, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Exo2', color: isDarkMode ? Colors.white : Colors.black)),
+            const Divider(),
+            child,
+          ],
         ),
       ),
     );
   }
 
-  Widget _reviewItem(String user, String review) {
+  Widget _reviewItem(String user, String review, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Text('$user: "$review"', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+      child: Text('$user: "$review"', style: const TextStyle(fontSize: 14, color: Colors.green)),
     );
   }
 
@@ -270,3 +303,4 @@ class ArenaDetailsScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Join community functionality not implemented yet.')));
   }
 }
+
