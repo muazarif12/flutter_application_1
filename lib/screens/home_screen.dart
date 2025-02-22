@@ -23,7 +23,8 @@ class HomeScreenState extends State<HomeScreen> {
       'price': 'Rs. 400/hr',
       'availability': 'Limited Slots',
       'image': 'assets/arena.jpg',
-      'tag': 'Player Favorite'
+      'tag': 'Player Favorite',
+      'sport': 'Cricket',
     },
     {
       'name': 'Arena 2',
@@ -32,7 +33,8 @@ class HomeScreenState extends State<HomeScreen> {
       'price': 'Rs. 350/hr',
       'availability': 'Available',
       'image': 'assets/sample_image2.jpg',
-      'tag': 'Newly Opened'
+      'tag': 'Newly Opened',
+      'sport': 'Football',
     },
     {
       'name': 'Arena 3',
@@ -41,7 +43,8 @@ class HomeScreenState extends State<HomeScreen> {
       'price': 'Rs. 500/hr',
       'availability': 'Few Slots Left',
       'image': 'assets/sample_image3.jpg',
-      'tag': 'Highly Rated'
+      'tag': 'Highly Rated',
+      'sport': 'Tennis',
     },
     {
       'name': 'Arena 4',
@@ -50,9 +53,13 @@ class HomeScreenState extends State<HomeScreen> {
       'price': 'Rs. 300/hr',
       'availability': 'Available',
       'image': 'assets/sample_image4.jpg',
-      'tag': 'Budget Friendly'
+      'tag': 'Budget Friendly',
+      'sport': 'Cricket',
     },
   ];
+
+  String? selectedSport;  // Initially null to show all arenas
+  bool sortAscending = true;  // Flag to track sorting order (ascending or descending)
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +82,12 @@ class HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           Container(
-            padding: const EdgeInsets.all(16),
-            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.only(left: 0,right: 16,top: 16,bottom: 16),
+            width: MediaQuery.of(context).size.width *0.8,
             child: TextField(
               decoration: InputDecoration(
                 labelStyle: const TextStyle(fontFamily: 'Exo2'),
-                hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black,fontFamily: 'Exo2'),
+                hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontFamily: 'Exo2'),
                 hintText: 'Search arenas near you',
                 prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white : Colors.black),
                 border: OutlineInputBorder(
@@ -89,6 +96,11 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          IconButton(
+            padding: EdgeInsets.only(right: 16),
+            icon: Icon(Icons.filter_list, color: isDarkMode ? Colors.white : Colors.black),
+            onPressed: _showFilterOptions,
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -96,21 +108,131 @@ class HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Horizontal sports scroll view
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: ['Cricket', 'Football', 'Tennis'].map((sport) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        // If the selected sport is tapped again, show all arenas
+                        if (selectedSport == sport) {
+                          selectedSport = null;
+                        } else {
+                          selectedSport = sport;
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: selectedSport == sport ? Colors.green : Colors.grey),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/$sport.png',
+                              width: 50,
+                              height: 50,
+                              color: selectedSport == sport ? Colors.green : Colors.grey,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              sport,
+                              style: TextStyle(
+                                color: selectedSport == sport ? Colors.green : Colors.grey,
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
             const SizedBox(height: 20),
 
-            // Arena List
+            // Filtered Arena List based on selected sport
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: arenas.length,
+              itemCount: _getFilteredArenas().length,
               itemBuilder: (context, index) {
-                final arena = arenas[index];
+                final arena = _getFilteredArenas()[index];
                 return _buildArenaCard(context, arena, isDarkMode);
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Function to get arenas after applying sport and price filter
+  List<Map<String, dynamic>> _getFilteredArenas() {
+    List<Map<String, dynamic>> filteredArenas = arenas.where((arena) {
+      return selectedSport == null || arena['sport'] == selectedSport;
+    }).toList();
+
+    // Sort the filtered arenas by price
+    filteredArenas.sort((a, b) {
+      final priceA = int.parse(a['price'].replaceAll(RegExp(r'[^0-9]'), ''));
+      final priceB = int.parse(b['price'].replaceAll(RegExp(r'[^0-9]'), ''));
+
+      return sortAscending ? priceA.compareTo(priceB) : priceB.compareTo(priceA);
+    });
+
+    return filteredArenas;
+  }
+
+  // Function to show the filter options dialog
+  void _showFilterOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sort by Price'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('Cheapest First'),
+                leading: Radio<bool>(
+                  value: true,
+                  groupValue: sortAscending,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      sortAscending = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('Most Expensive First'),
+                leading: Radio<bool>(
+                  value: false,
+                  groupValue: sortAscending,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      sortAscending = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -170,7 +292,7 @@ class HomeScreenState extends State<HomeScreen> {
                   // Arena Name and Location
                   Text(
                     arena['name'],
-                    style:TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -180,7 +302,7 @@ class HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.blue,size: 16,),
+                      Icon(Icons.location_on, color: Colors.blue, size: 16),
                       Text(
                         arena['location'],
                         style: const TextStyle(
