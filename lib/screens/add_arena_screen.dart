@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import '../bloc/theme/theme_bloc.dart';
+import '../bloc/theme/theme_state.dart';
 
 class AddArenaScreen extends StatefulWidget {
   const AddArenaScreen({super.key});
@@ -68,8 +72,18 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        forceMaterialTransparency: true,
         title: const Text("Add New Arena"),
         centerTitle: true,
       ),
@@ -79,58 +93,81 @@ class AddArenaScreenState extends State<AddArenaScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _buildTextField(nameController, "Arena Name"),
-              _buildTextField(descriptionController, "Description"),
-              _buildTextField(sizeController, "Arena Size (sq. meters)"),
-              _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket']),
-              _buildToggleField("Half Court Available?", _isHalfCourt, (value) {
-                setState(() => _isHalfCourt = value);
-              }),
-              _buildTextField(locationController, "Location"),
-              _buildTextField(contactController, "Contact Number"),
-              
-              // Media Upload
-              _buildMediaUpload(),
+              _card(isDarkMode: isDarkMode, title: 'Basic Information', child: Column(
+                children: [
+                  _buildTextField(nameController, "Arena Name",),
+                  _buildTextField(descriptionController, "Description", ),
+                  _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket']),
+                ],
+              )),
+              _card(isDarkMode: isDarkMode, title: 'Location & Contact', child: Column(
+                children: [
+                  _buildTextField(locationController, "Location"),
+                  _buildTextField(contactController, "Contact Number"),
+                ],
+              )),
 
-              // Facilities
-              _buildMultiCheckboxField("Facilities Available", facilities, selectedFacilities),
+              _card(isDarkMode: isDarkMode, title: 'Media Upload', child: _buildMediaUpload()),
 
-              _buildToggleField("Allow Instant Booking?", _instantBooking, (value) {
-                setState(() => _instantBooking = value);
-              }),
+              _card(isDarkMode: isDarkMode, title: 'Facilities', child: _buildMultiCheckboxField(facilities, selectedFacilities,)),
 
-              _buildPricingStrategy(),
-              
-              _buildSlotDesign(),
+              _card(isDarkMode: isDarkMode, title: 'Pricing & Fees', child: Column(
+                children: [
+                  _buildPricingStrategy(),
+                  _buildTextField(pricingController, "Base Pricing (Per Hour)", ),
+                  _buildTextField(additionalFeeController, "Additional Services Fee (if any)", ),
+                ],
+              )),
 
-              _buildTextField(additionalFeeController, "Additional Services Fee (if any)"),
+              _card(isDarkMode: isDarkMode, title: 'Booking & Slot Configurations', child: Column(
+                children: [
+                  _buildToggleField("Allow Instant Booking?", _instantBooking, (value) => setState(() => _instantBooking = value),),
+                  _buildToggleField("Half Court Available?", _isHalfCourt, (value) => setState(() => _isHalfCourt = value),),
+                  _buildSlotDesign(),
+                ],
+              )),
 
-              _buildToggleField("Set Monthly Offer?", _monthlyOffer, (value) {
-                setState(() => _monthlyOffer = value);
-              }),
-
-              _buildToggleField("Set Daily Promotion?", _dailyPromo, (value) {
-                setState(() => _dailyPromo = value);
-              }),
-
-              _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate']),
+              _card(isDarkMode: isDarkMode, title: 'Policies', child: _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate'],)),
 
               const SizedBox(height: 20),
 
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Save arena logic
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Arena Added Successfully!"))
-                    );
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text("Add Arena"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Save arena logic
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Arena Added Successfully!"))
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text("Add Arena"),
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _card({required String title, required Widget child, required bool isDarkMode}) {
+    return Card(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            const Divider(),
+            child,
+          ],
         ),
       ),
     );
@@ -179,7 +216,6 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   Widget _buildPricingStrategy() {
     return Column(
       children: [
-        const Text("Pricing Strategy"),
         RadioListTile(
           title: const Text("Per Hour"),
           value: "Per Hour",
@@ -227,11 +263,10 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   }
 
   // Multi-checkbox field
-  Widget _buildMultiCheckboxField(String title, List<String> options, Map<String, bool> selections) {
+  Widget _buildMultiCheckboxField(List<String> options, Map<String, bool> selections) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title),
         ...options.map((option) => CheckboxListTile(
           title: Text(option),
           value: selections[option],

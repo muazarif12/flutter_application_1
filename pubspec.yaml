@@ -38,6 +38,9 @@ dependencies:
   url_launcher: ^6.1.11
   flutter_bloc: ^9.0.0
   carousel_slider: ^5.0.0
+  syncfusion_flutter_calendar: ^28.2.7
+  lucide_icons: ^0.257.0
+  geolocator: ^13.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

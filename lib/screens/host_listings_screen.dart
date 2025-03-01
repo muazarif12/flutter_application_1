@@ -16,67 +16,175 @@ class HostListingsScreenState extends State<HostListingsScreen> {
       'name': 'GreenField Arena',
       'location': 'Downtown Sports Complex',
       'price': 'Rs. 500/hr',
-      'image': 'assets/arena.jpg'
+      'rating': 4.5,
+      'availability': 'Available',
+      'image': 'assets/arena.jpg',
+      'tag': 'Football'
     },
     {
       'id': 2,
       'name': 'Elite Sports Club',
       'location': 'Phase 6, DHA',
       'price': 'Rs. 700/hr',
-      'image': 'assets/sample_image2.jpg'
+      'rating': 4.8,
+      'availability': 'Limited Slots',
+      'image': 'assets/sample_image2.jpg',
+      'tag': 'Tennis'
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        forceMaterialTransparency: true,
         title: const Text("My Arenas"),
         centerTitle: true,
       ),
       body: arenas.isEmpty
           ? const Center(child: Text("No arenas added yet."))
           : ListView.builder(
-              itemCount: arenas.length,
-              itemBuilder: (context, index) {
-                final arena = arenas[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  elevation: 3,
-                  child: ListTile(
-                    leading: ClipRRect(
+        itemCount: arenas.length,
+        itemBuilder: (context, index) {
+          final arena = arenas[index];
+          return Card(
+            color: Colors.white,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            elevation: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.asset(
                         arena['image'],
-                        width: 80,
-                        height: 80,
+                        width: double.infinity,
+                        height: 150,
                         fit: BoxFit.cover,
                       ),
                     ),
-                    title: Text(arena['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text("${arena['location']} • ${arena['price']}"),
-                    trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'edit') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditArenaScreen(arena: arena),
-                            ),
-                          );
-                        } else if (value == 'delete') {
-                          _deleteArena(arena['id']);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                        const PopupMenuItem(value: 'delete', child: Text('Delete')),
-                      ],
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          arena['tag'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontFamily: 'Exo2',
+                          ),
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        arena['name'],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Exo2',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on, color: Colors.blue, size: 16),
+                          Text(
+                            arena['location'],
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                              fontFamily: 'Exo2',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            arena['rating'].toString(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Exo2',
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            arena['price'],
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Exo2',
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              arena['availability'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                          ),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditArenaScreen(arena: arena),
+                                  ),
+                                );
+                              } else if (value == 'delete') {
+                                _deleteArena(arena['id']);
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                );
-              },
+                ),
+              ],
             ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

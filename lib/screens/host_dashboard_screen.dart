@@ -6,7 +6,10 @@ class HostDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        forceMaterialTransparency: true,
         title: const Text("Dashboard"),
         centerTitle: true,
       ),
@@ -15,7 +18,6 @@ class HostDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Currently Booked Slots
             _buildSectionTitle("Currently Booked Slots"),
             _buildBookingList([
               {'time': '10:00 AM - 12:00 PM', 'sport': 'Football', 'customer': 'John Doe'},
@@ -24,7 +26,6 @@ class HostDashboardScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Upcoming Bookings
             _buildSectionTitle("Upcoming Bookings"),
             _buildBookingList([
               {'time': '6:00 PM - 8:00 PM', 'sport': 'Cricket', 'customer': 'Alice Johnson'},
@@ -33,11 +34,9 @@ class HostDashboardScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Calendar View Button
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to Calendar View Page
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -51,13 +50,11 @@ class HostDashboardScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Reminder to Reply to Messages
             _buildSectionTitle("Reminders"),
             _buildMessageReminder("You have 2 unread messages from customers."),
 
             const SizedBox(height: 20),
 
-            // Contact App Support
             _buildSectionTitle("Support"),
             _buildContactSupportButton(context),
           ],
@@ -66,65 +63,62 @@ class HostDashboardScreen extends StatelessWidget {
     );
   }
 
-  // Section Title
   Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
-  // Booking List
   Widget _buildBookingList(List<Map<String, String>> bookings) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: bookings.length,
-      itemBuilder: (context, index) {
-        final booking = bookings[index];
+    return Column(
+      children: bookings.map((booking) {
         return Card(
+          color: Colors.white,
+          elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
-            title: Text(booking['time']!),
+            contentPadding: const EdgeInsets.all(12),
+            title: Text(booking['time']!, style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text("${booking['sport']} - ${booking['customer']}"),
+            trailing: const Icon(Icons.calendar_today, color: Colors.blue),
           ),
         );
-      },
+      }).toList(),
     );
   }
 
-  // Message Reminder
   Widget _buildMessageReminder(String message) {
     return Card(
+      color: Colors.white,
+      elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         leading: const Icon(Icons.message, color: Colors.blue),
         title: Text(message),
         trailing: const Icon(Icons.arrow_forward),
-        onTap: () {
-          // Navigate to messages screen
-        },
+        onTap: () {},
       ),
     );
   }
 
-  // Contact App Support Button
   Widget _buildContactSupportButton(BuildContext context) {
     return Card(
+      color: Colors.white,
+      elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         leading: const Icon(Icons.support_agent, color: Colors.green),
         title: const Text("Contact App Support"),
         trailing: const Icon(Icons.arrow_forward),
-        onTap: () {
-          // Open support contact options
-          _showSupportOptions(context);
-        },
+        onTap: () => _showSupportOptions(context),
       ),
     );
   }
 
-  // Show Support Options
   void _showSupportOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -135,26 +129,17 @@ class HostDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.email),
               title: const Text("Email Support"),
-              onTap: () {
-                // Open email app
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.phone),
               title: const Text("Call Support"),
-              onTap: () {
-                // Open phone dialer
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.chat),
               title: const Text("Live Chat"),
-              onTap: () {
-                // Open live chat
-                Navigator.pop(context);
-              },
+              onTap: () => Navigator.pop(context),
             ),
           ],
         );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import '../bloc/theme/theme_bloc.dart';
 import '../bloc/theme/theme_state.dart';
 import 'arena_details_screen.dart';
@@ -58,8 +59,74 @@ class HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-  String? selectedSport;  // Initially null to show all arenas
-  bool sortAscending = true;  // Flag to track sorting order (ascending or descending)
+  String? selectedSport;
+  bool sortAscending = true;
+  TextEditingController searchController = TextEditingController(); // ✅ Search Controller
+  String searchQuery = ""; // Flag to track sorting order (ascending or descending)
+
+  @override
+  void initState() {
+    super.initState();
+    _showLocationDialog(); // ✅ Ask for location when screen loads
+  }
+
+  void _showLocationDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Prevents closing without selection
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Enable Location"),
+            content: const Text(
+              "To provide the best experience, allow access to your location.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog without enabling
+                },
+                child: const Text("No, Thanks"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  _requestLocationPermission(); // ✅ Request location
+                },
+                child: const Text("Allow"),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  // ✅ Function to request location permission
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      _getCurrentLocation(); // ✅ Get user's location
+    }
+  }
+
+  // ✅ Function to get user's current location
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      print("User Location: Lat:${position.latitude}, Long:${position.longitude}");
+    } catch (e) {
+      print("Error getting location: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +149,15 @@ class HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           Container(
-            padding: const EdgeInsets.only(left: 0,right: 16,top: 16,bottom: 16),
-            width: MediaQuery.of(context).size.width *0.8,
+            padding: const EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 16),
+            width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
+              controller: searchController, // ✅ Connect Controller
+              onChanged: (query) {
+                setState(() {
+                  searchQuery = query.toLowerCase(); // ✅ Update search query
+                });
+              },
               decoration: InputDecoration(
                 labelStyle: const TextStyle(fontFamily: 'Exo2'),
                 hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontFamily: 'Exo2'),
@@ -93,6 +166,17 @@ class HomeScreenState extends State<HomeScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                suffixIcon: searchQuery.isNotEmpty
+                    ? IconButton(
+                  icon: Icon(Icons.clear, color: isDarkMode ? Colors.white : Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      searchController.clear();
+                      searchQuery = "";
+                    });
+                  },
+                )
+                    : null,
               ),
             ),
           ),
@@ -176,10 +260,14 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Function to get arenas after applying sport and price filter
+  // Function to get arenas after applying search and sport filters
   List<Map<String, dynamic>> _getFilteredArenas() {
     List<Map<String, dynamic>> filteredArenas = arenas.where((arena) {
-      return selectedSport == null || arena['sport'] == selectedSport;
+      final nameMatches = arena['name'].toLowerCase().contains(searchQuery);
+      final locationMatches = arena['location'].toLowerCase().contains(searchQuery);
+      final sportMatches = selectedSport == null || arena['sport'] == selectedSport;
+
+      return (nameMatches || locationMatches) && sportMatches;
     }).toList();
 
     // Sort the filtered arenas by price

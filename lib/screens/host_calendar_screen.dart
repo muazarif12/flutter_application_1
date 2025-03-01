@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class HostCalendarScreen extends StatefulWidget {
   const HostCalendarScreen({super.key});
 
   @override
-  _CalendarScreenState createState() => _CalendarScreenState();
+  _HostCalendarScreenState createState() => _HostCalendarScreenState();
 }
 
-class _CalendarScreenState extends State<HostCalendarScreen> {
-  // Calendar view mode (Day or Month)
-  String _viewMode = 'Day';
+class _HostCalendarScreenState extends State<HostCalendarScreen> {
+  final CalendarView _viewMode = CalendarView.month; // Default View Mode
 
-  // Dummy data for bookings
+  // Dummy booking data
   final List<Map<String, dynamic>> _bookings = [
     {
-      'time': '10:00 AM - 12:00 PM',
       'sport': 'Football',
       'customer': 'John Doe',
       'amount': 200,
       'isHalfCourt': false,
+      'date': DateTime(2025, 2, 28, 10, 0),
     },
     {
-      'time': '2:00 PM - 4:00 PM',
       'sport': 'Tennis',
       'customer': 'Jane Smith',
       'amount': 150,
       'isHalfCourt': true,
+      'date': DateTime(2025, 2, 28, 14, 0),
     },
     {
-      'time': '6:00 PM - 8:00 PM',
       'sport': 'Cricket',
       'customer': 'Alice Johnson',
       'amount': 300,
       'isHalfCourt': false,
+      'date': DateTime(2025, 3, 1, 18, 0),
     },
   ];
 
@@ -40,100 +41,110 @@ class _CalendarScreenState extends State<HostCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Calendar"),
+        automaticallyImplyLeading: false,
+        title: const Text("Host Calendar"),
         centerTitle: true,
-        actions: [
-          // Toggle between Day and Month View
-          DropdownButton<String>(
-            value: _viewMode,
-            items: const [
-              DropdownMenuItem(value: 'Day', child: Text("Day View")),
-              DropdownMenuItem(value: 'Month', child: Text("Month View")),
-            ],
-            onChanged: (value) {
-              setState(() {
-                _viewMode = value!;
-              });
-            },
-          ),
-        ],
-      ),
-      body: _viewMode == 'Day' ? _buildDayView() : _buildMonthView(),
-    );
-  }
 
-  // Day View
-  Widget _buildDayView() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Display bookings as blocked timings
-        for (var booking in _bookings)
-          _buildBookingBlock(booking),
-      ],
-    );
-  }
-
-  // Booking Block for Day View
-  Widget _buildBookingBlock(Map<String, dynamic> booking) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
-      width: booking['isHalfCourt'] ? MediaQuery.of(context).size.width * 0.5 : double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.blue[100],
-        borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            booking['time'],
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text("Customer: ${booking['customer']}"),
-          Text("Amount: \$${booking['amount']}"),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              // Show more details
-              _showBookingDetails(booking);
-            },
-            child: const Text("View Details"),
-          ),
-        ],
+      body: SfCalendar(
+        firstDayOfWeek: 1,
+        monthViewSettings: MonthViewSettings(showTrailingAndLeadingDates: false),
+        view: _viewMode,
+        allowedViews: const [CalendarView.day, CalendarView.month], // Enables switching
+        dataSource: BookingDataSource(_getCalendarAppointments()),
+        onTap: (CalendarTapDetails details) {
+          if (details.appointments != null && details.appointments!.isNotEmpty) {
+            _showBookingDetails(details.appointments!.first);
+          }
+        },
       ),
     );
   }
 
-  // Show Booking Details
-  void _showBookingDetails(Map<String, dynamic> booking) {
+  // Convert bookings to calendar appointments
+  List<Appointment> _getCalendarAppointments() {
+    return _bookings.map((booking) {
+      return Appointment(
+        startTime: booking['date'],
+        endTime: booking['date'].add(const Duration(hours: 2)),
+        subject: booking['sport'],
+        color: booking['isHalfCourt'] ? Colors.orange : Colors.blue,
+        notes: booking['customer'],
+      );
+    }).toList();
+  }
+
+  // Show booking details
+  void _showBookingDetails(Appointment appointment) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.white,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Booking Details",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: Text(
+                  "Booking Details",
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 16),
-              Text("Time: ${booking['time']}"),
-              Text("Sport: ${booking['sport']}"),
-              Text("Customer: ${booking['customer']}"),
-              Text("Amount: \$${booking['amount']}"),
-              Text("Court Type: ${booking['isHalfCourt'] ? 'Half Court' : 'Full Court'}"),
+              _buildDetailRow(LucideIcons.dumbbell, "Sport", appointment.subject),
+              _buildDetailRow(LucideIcons.user, "Customer", appointment.notes ?? "N/A"),
+              _buildDetailRow(
+                LucideIcons.clock,
+                "Time",
+                "${_formatTime(appointment.startTime)} - ${_formatTime(appointment.endTime)}",
+              ),
+              _buildDetailRow(
+                LucideIcons.home,
+                "Court Type",
+                appointment.color == Colors.orange ? "Half Court" : "Full Court",
+              ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Close"),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(LucideIcons.x),
+                  label: const Text("Close"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  ),
+                ),
               ),
             ],
           ),
@@ -142,47 +153,35 @@ class _CalendarScreenState extends State<HostCalendarScreen> {
     );
   }
 
-  // Month View
-  Widget _buildMonthView() {
-    // Dummy data for month view
-    final Map<String, Map<String, dynamic>> monthData = {
-      '2023-10-01': {'bookings': 3, 'balance': 500},
-      '2023-10-02': {'bookings': 2, 'balance': 300},
-      '2023-10-03': {'bookings': 1, 'balance': 150},
-      // Add more days as needed
-    };
-
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7, // 7 days in a week
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+  Widget _buildDetailRow(IconData icon, String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blueGrey, size: 22),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          ),
+        ],
       ),
-      itemCount: monthData.length,
-      itemBuilder: (context, index) {
-        final date = monthData.keys.elementAt(index);
-        final data = monthData[date]!;
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.green[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                date.split('-').last, // Display day only
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text("Bookings: ${data['bookings']}"),
-              Text("Balance: \$${data['balance']}"),
-            ],
-          ),
-        );
-      },
     );
+  }
+
+  String _formatTime(DateTime time) {
+    return "${time.hour % 12 == 0 ? 12 : time.hour % 12}:${time.minute.toString().padLeft(2, '0')} ${time.hour >= 12 ? "PM" : "AM"}";
+  }
+}
+
+// Custom Data Source for Syncfusion Calendar
+class BookingDataSource extends CalendarDataSource {
+  BookingDataSource(List<Appointment> source) {
+    appointments = source;
   }
 }

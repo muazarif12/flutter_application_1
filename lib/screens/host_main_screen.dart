@@ -6,6 +6,7 @@ import '../bloc/theme/theme_state.dart';
 import 'host_listings_screen.dart';
 import 'host_dashboard_screen.dart';
 import 'host_calendar_screen.dart';
+import 'host_settings_screen.dart';
 // import 'host_messages_screen.dart';
 // import 'host_settings_screen.dart';
 
@@ -29,7 +30,7 @@ class HostMainScreenState extends State<HostMainScreen> {
      const HostDashboardScreen(), // Hosts see bookings overview
      const HostCalendarScreen(), // Hosts manage calendar
       // const HostMessagesScreen(), // Chat with customers
-      // const HostSettingsScreen(), // Settings & payouts
+      const HostSettingsScreen(), // Settings & payouts
     ];
   }
 
@@ -44,26 +45,33 @@ class HostMainScreenState extends State<HostMainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
-        unselectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: "Listings"),
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Calendar"),
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: "Messages"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
-        ],
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent, // Removes splash effect
+          highlightColor: Colors.transparent, // Removes highlight effect
+          hoverColor: Colors.transparent, // Removes hover effect
+        ),
+        child: BottomNavigationBar(
+          selectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
+          unselectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: "Listings"),
+            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
+            BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Calendar"),
+            // BottomNavigationBarItem(icon: Icon(Icons.message), label: "Messages"),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+          ],
+        ),
       ),
     );
   }

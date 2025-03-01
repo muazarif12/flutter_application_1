@@ -79,6 +79,8 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
         title: Text(
           "Bookings",
           style: TextStyle(

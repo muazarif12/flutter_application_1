@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import '../bloc/theme/theme_bloc.dart';
+import '../bloc/theme/theme_state.dart';
 
 class EditArenaScreen extends StatefulWidget {
   final Map<String, dynamic> arena;
@@ -12,7 +16,8 @@ class EditArenaScreen extends StatefulWidget {
 }
 
 class EditArenaScreenState extends State<EditArenaScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 
   // Controllers for form inputs
   late TextEditingController nameController;
@@ -28,6 +33,7 @@ class EditArenaScreenState extends State<EditArenaScreen> {
 
   // Dropdown selections
   String? _selectedSport;
+  int? _selectedSlotDuration;
   bool _isHalfCourt = false;
   bool _instantBooking = false;
   String _pricingStrategy = 'Per Hour';
@@ -61,6 +67,7 @@ class EditArenaScreenState extends State<EditArenaScreen> {
     additionalFeeController = TextEditingController(text: widget.arena['additionalFee'] ?? '');
 
     _selectedSport = widget.arena['sport'];
+    _selectedSlotDuration = widget.arena['slotDuration'] ?? 60;
     _isHalfCourt = widget.arena['isHalfCourt'] ?? false;
     _instantBooking = widget.arena['instantBooking'] ?? false;
     _pricingStrategy = widget.arena['pricingStrategy'] ?? 'Per Hour';
@@ -85,10 +92,20 @@ class EditArenaScreenState extends State<EditArenaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeBloc>().state;
+    final bool isDarkMode = themeState is DarkThemeState;
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        title: const Text("Edit Arena"),
+        automaticallyImplyLeading: false,
+        forceMaterialTransparency: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDarkMode ? Colors.white : Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Edit Arena", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
         centerTitle: true,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -96,55 +113,54 @@ class EditArenaScreenState extends State<EditArenaScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _buildTextField(nameController, "Arena Name"),
-              _buildTextField(descriptionController, "Description"),
-              _buildTextField(sizeController, "Arena Size (sq. meters)"),
-              _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket']),
-              _buildToggleField("Half Court Available?", _isHalfCourt, (value) {
-                setState(() => _isHalfCourt = value);
-              }),
-              _buildTextField(locationController, "Location"),
-              _buildTextField(contactController, "Contact Number"),
-              
-              // Media Upload
-              _buildMediaUpload(),
+              _card(isDarkMode: isDarkMode, title: 'Basic Information', child: Column(
+                children: [
+                  _buildTextField(nameController, "Arena Name", isDarkMode),
+                  _buildTextField(descriptionController, "Description", isDarkMode),
+                  _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket'],isDarkMode),
+                ],
+              )),
 
-              // Facilities
-              _buildMultiCheckboxField("Facilities Available", facilities, selectedFacilities),
+              _card(isDarkMode: isDarkMode, title: 'Location & Contact', child: Column(
+                children: [
+                  _buildTextField(locationController, "Location", isDarkMode),
+                  _buildTextField(contactController, "Contact Number", isDarkMode),
+                ],
+              )),
 
-              _buildToggleField("Allow Instant Booking?", _instantBooking, (value) {
-                setState(() => _instantBooking = value);
-              }),
+              _card(isDarkMode: isDarkMode, title: 'Media Upload', child: _buildMediaUpload()),
 
-              _buildPricingStrategy(),
-              
-              _buildSlotDesign(),
+              _card(isDarkMode: isDarkMode, title: 'Facilities', child: _buildMultiCheckboxField(facilities, selectedFacilities, isDarkMode)),
 
-              _buildTextField(additionalFeeController, "Additional Services Fee (if any)"),
+              _card(isDarkMode: isDarkMode, title: 'Pricing & Fees', child: Column(
+                children: [
+                  _buildPricingStrategy(),
+                  _buildTextField(pricingController, "Base Pricing (Per Hour)", isDarkMode),
+                  _buildTextField(additionalFeeController, "Additional Services Fee (if any)", isDarkMode),
+                ],
+              )),
 
-              _buildToggleField("Set Monthly Offer?", _monthlyOffer, (value) {
-                setState(() => _monthlyOffer = value);
-              }),
+              _card(isDarkMode: isDarkMode, title: 'Booking & Slot Configurations', child: Column(
+                children: [
+                  _buildToggleField("Allow Instant Booking?", _instantBooking, (value) => setState(() => _instantBooking = value),isDarkMode),
+                  _buildToggleField("Half Court Available?", _isHalfCourt, (value) => setState(() => _isHalfCourt = value),isDarkMode),
+                  _buildSlotDesign(isDarkMode),
+                ],
+              )),
 
-              _buildToggleField("Set Daily Promotion?", _dailyPromo, (value) {
-                setState(() => _dailyPromo = value);
-              }),
+              _card(isDarkMode: isDarkMode, title: 'Policies', child: _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate'],isDarkMode)),
 
-              _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate']),
-
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Save arena changes logic
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Arena Updated Successfully!"))
-                    );
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text("Save Changes"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Arena Updated Successfully!")));
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text("Save Changes"),
+                ),
               ),
             ],
           ),
@@ -153,30 +169,60 @@ class EditArenaScreenState extends State<EditArenaScreen> {
     );
   }
 
+  Widget _card({required String title, required Widget child, required bool isDarkMode}) {
+    return Card(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            const Divider(),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+
+
   // Generic Text Field
-  Widget _buildTextField(TextEditingController controller, String label) {
+  Widget _buildTextField(TextEditingController controller, String label, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
+        style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         controller: controller,
-        decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: label, border: OutlineInputBorder(),
+          labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
+        ),
         validator: (value) => value!.isEmpty ? "Required field" : null,
       ),
     );
   }
 
   // Dropdown Field
-  Widget _buildDropdownField(String label, List<String> items) {
+  Widget _buildDropdownField(String label, List<String> items, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
-        value: label == "Sport Offered" ? _selectedSport : _cancellationPolicy,
-        decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
+        value: label == "Sport Offered"
+            ? _selectedSport
+            : label == "Cancellation Policy"
+            ? _cancellationPolicy
+            : _selectedSlotDuration?.toString(),
+        decoration: InputDecoration(labelText: label, border: OutlineInputBorder(), labelStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
         items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
         onChanged: (value) {
           setState(() {
             if (label == "Sport Offered") _selectedSport = value;
             if (label == "Cancellation Policy") _cancellationPolicy = value!;
+            if (label == "Slot Duration (minutes)") _selectedSlotDuration = int.tryParse(value!);
           });
         },
         validator: (value) => value == null ? "Required field" : null,
@@ -185,9 +231,12 @@ class EditArenaScreenState extends State<EditArenaScreen> {
   }
 
   // Toggle Switch
-  Widget _buildToggleField(String label, bool value, Function(bool) onChanged) {
+  Widget _buildToggleField(String label, bool value, Function(bool) onChanged, bool isDarkMode) {
     return SwitchListTile(
-      title: Text(label),
+      title: Text(
+        label,
+        style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+      ),
       value: value,
       onChanged: onChanged,
     );
@@ -219,21 +268,20 @@ class EditArenaScreenState extends State<EditArenaScreen> {
   }
 
   // Slot Design
-  Widget _buildSlotDesign() {
+  Widget _buildSlotDesign(bool isDarkMode) {
     return Column(
       children: [
-        const Text("Slot Design"),
-        _buildTimePicker("Opening Time", (time) => _openingTime = time),
-        _buildTimePicker("Closing Time", (time) => _closingTime = time),
-        _buildDropdownField("Slot Duration (minutes)", ['30', '45', '60', '90', '120']),
+        _buildTimePicker("Opening Time", (time) => _openingTime = time,isDarkMode),
+        _buildTimePicker("Closing Time", (time) => _closingTime = time,isDarkMode),
+        _buildDropdownField("Slot Duration (minutes)", ['30', '45', '60', '90', '120'],isDarkMode),
       ],
     );
   }
 
   // Time Picker
-  Widget _buildTimePicker(String label, Function(TimeOfDay) onPicked) {
+  Widget _buildTimePicker(String label, Function(TimeOfDay) onPicked, bool isDarkMode) {
     return ListTile(
-      title: Text(label),
+      title: Text(label, style: TextStyle(color:isDarkMode? Colors.white : Colors.black ),),
       trailing: IconButton(
         icon: const Icon(Icons.access_time),
         onPressed: () async {
@@ -258,14 +306,15 @@ class EditArenaScreenState extends State<EditArenaScreen> {
   }
 
   // Multi-Checkbox Field
-  Widget _buildMultiCheckboxField(String label, List<String> options, Map<String, bool> selectedOptions) {
+  Widget _buildMultiCheckboxField(List<String> options, Map<String, bool> selectedOptions, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        // Text(label!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,  color: isDarkMode? Colors.white : Colors.black)),
         ...options.map((option) {
           return CheckboxListTile(
-            title: Text(option),
+
+            title: Text(option, style: TextStyle( color: isDarkMode? Colors.white : Colors.black),),
             value: selectedOptions[option] ?? false,
             onChanged: (value) {
               setState(() {
@@ -273,7 +322,7 @@ class EditArenaScreenState extends State<EditArenaScreen> {
               });
             },
           );
-        }).toList(),
+        }),
       ],
     );
   }
