@@ -312,6 +312,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  infinite_calendar_view:
+    dependency: "direct main"
+    description:
+      name: infinite_calendar_view
+      sha256: c2ac99a57168afef55ea75f1f5edf9a36a9e88c57a5fb3be075b102ba15edcb0
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.4"
   intl:
     dependency: transitive
     description:
@@ -509,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+  sticky_infinite_list:
+    dependency: transitive
+    description:
+      name: sticky_infinite_list
+      sha256: d9cc75fd08af04bd23608a7129a895d6424977897bb54a11687ed1f3a3d55be1
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   stream_channel:
     dependency: transitive
     description:
@@ -529,26 +545,26 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: f92461323f37e64e52f4582d3c3c939f983a78efeaf415125f69efa532938187
+      sha256: "444de97831fda40b595ae4c97b4412850b8ee568b75a35be473b329bddcf0290"
       url: "https://pub.dev"
     source: hosted
-    version: "28.2.7"
+    version: "28.2.9"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "393db014b90865222f8c442dd989a9ba6107bb92bf4d4774257d60a3ee05053f"
+      sha256: "5a1a76eef118e511443b299925d4a802eb8259388d6a580e0ad6413d1a70f987"
       url: "https://pub.dev"
     source: hosted
-    version: "28.2.7"
+    version: "28.2.9"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: "99caad48fb56397fc9208618a09b7bb0f61c14eebfc6bd9196bec7c20a4c4999"
+      sha256: "5621712605381a5c488632a04d180b865dd7f297a05e78d4a6ab9cfb4a3bdb59"
       url: "https://pub.dev"
     source: hosted
-    version: "28.2.7"
+    version: "28.2.9"
   term_glyph:
     dependency: transitive
     description:

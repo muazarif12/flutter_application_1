@@ -27,10 +27,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 });
               },
               children: [
-                _buildSlide(
+                _buildIntroSlide(
                   title: "Welcome to ",
                   subtitle: "The only sports booking app you will need",
-                  image: 'assets/logo.jpeg'
+                  image: 'assets/logo.jpeg', image2: 'assets/intro.jpg'
                 ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -49,7 +49,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Icon(Icons.travel_explore_outlined, size: 150,),
+                      Image.asset('assets/267.jpg'),
                       const SizedBox(height: 20),
                       Text(
                         "Find sports venues and activities that suit your liking",
@@ -78,39 +78,28 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _buildSlide({required String title, required String subtitle, required String image}) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-                fontFamily: 'Exo2'
-              ),
-            ),
-            Image.asset(image),
-            const SizedBox(height: 20),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontFamily: 'Exo2',
-              ),
-            ),
-          ],
+  Widget _buildIntroSlide({required String title, required String subtitle, required String image, required String image2}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(image, scale: 2,),
+        Transform.translate(
+          offset: const Offset(0, -80),
+            child: Image.asset(image2)
         ),
-      ),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+            fontFamily: 'Exo2',
+          ),
+        ),
+      ],
     );
   }
+
 
   Widget _buildSlideWithButton({required String title, required String subtitle, required Icon icon}) {
     return Padding(
@@ -130,7 +119,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            icon,
+            Image.asset('assets/book.jpg',),
             const SizedBox(height: 20),
             Text(
               subtitle,

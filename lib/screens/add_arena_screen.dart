@@ -24,23 +24,30 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   final TextEditingController contactController = TextEditingController();
   final TextEditingController pricingController = TextEditingController();
   final TextEditingController additionalFeeController = TextEditingController();
-  
+
   // Selected images/videos
   List<File> _mediaFiles = [];
-  
+
+  final Map<String, TimeOfDay?> _openingTimes = {};
+  final Map<String, TimeOfDay?> _closingTimes = {};
+
   // Dropdown selections
   String? _selectedSport;
   bool _isHalfCourt = false;
   bool _instantBooking = false;
   String _pricingStrategy = 'Per Hour';
-  
+
   // Slot configuration
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
-  int _slotDuration = 60;
-  bool _monthlyOffer = false;
   bool _dailyPromo = false;
-  
+  final Map<String, int> _slotDurations = {};
+  final Map<String, List<String>> _generatedSlots = {};
+
+  final List<String> _days = [
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+  ];
+
   // Facilities checkboxes
   final List<String> facilities = [
     'Parking', 'Showers', 'Lockers', 'Cafeteria', 'Wi-Fi', 'Sauna'
@@ -56,6 +63,12 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     for (var facility in facilities) {
       selectedFacilities[facility] = false;
     }
+    for (var day in _days) {
+      _openingTimes[day] = null;
+      _closingTimes[day] = null;
+      _slotDurations[day] = 60; // Default slot duration
+      _generatedSlots[day] = [];
+    }
   }
 
   // Image Picker Function
@@ -70,22 +83,180 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     }
   }
 
+  // Time Picker Function
+  Future<void> _pickTime(BuildContext context, String day, bool isOpeningTime) async {
+    TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        if (isOpeningTime) {
+          _openingTimes[day] = picked;
+        } else {
+          _closingTimes[day] = picked;
+        }
+      });
+
+      _generateSlots(day);
+    }
+  }
+
+  // Generate Slots Based on Opening, Closing Time & Duration
+  void _generateSlots(String day) {
+    if (_openingTimes[day] == null || _closingTimes[day] == null) return;
+
+    TimeOfDay startTime = _openingTimes[day]!;
+    TimeOfDay endTime = _closingTimes[day]!;
+    int duration = _slotDurations[day]!;
+
+    List<String> slots = [];
+    TimeOfDay currentTime = startTime;
+
+    while (_timeOfDayToMinutes(currentTime) + duration <= _timeOfDayToMinutes(endTime)) {
+      TimeOfDay slotEnd = _addMinutesToTime(currentTime, duration);
+      slots.add("${_formatTime(currentTime)} - ${_formatTime(slotEnd)}");
+      currentTime = slotEnd;
+    }
+
+    setState(() {
+      _generatedSlots[day] = slots;
+    });
+  }
+
+  // Convert TimeOfDay to Minutes
+  int _timeOfDayToMinutes(TimeOfDay time) {
+    return time.hour * 60 + time.minute;
+  }
+
+  // Add Minutes to TimeOfDay
+  TimeOfDay _addMinutesToTime(TimeOfDay time, int minutes) {
+    int totalMinutes = _timeOfDayToMinutes(time) + minutes;
+    return TimeOfDay(hour: totalMinutes ~/ 60, minute: totalMinutes % 60);
+  }
+
+  // Format TimeOfDay
+  String _formatTime(TimeOfDay time) {
+    return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period == DayPeriod.am ? "AM" : "PM"}";
+  }
+
+  Widget _buildSlotConfiguration() {
+    return Column(
+      children: _days.map((day) {
+        return ExpansionTile(
+          title: Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Opening Time
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Text("Opening: "),
+                        Expanded(
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              alignment: Alignment.centerLeft,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              side: const BorderSide(color: Colors.grey), // Add border
+                            ),
+                            onPressed: () => _pickTime(context, day, true),
+                            child: Text(
+                              _openingTimes[day] != null ? _formatTime(_openingTimes[day]!) : "Select Time",
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10), // Space between
+                  // Closing Time
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Text("Closing: "),
+                        Expanded(
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              alignment: Alignment.centerLeft,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              side: const BorderSide(color: Colors.grey), // Add border
+                            ),
+                            onPressed: () => _pickTime(context, day, false),
+                            child: Text(
+                              _closingTimes[day] != null ? _formatTime(_closingTimes[day]!) : "Select Time",
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Slot Duration Selection
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: DropdownButtonFormField<int>(
+                value: _slotDurations[day],
+                decoration: const InputDecoration(labelText: "Slot Duration"),
+                items: [30, 45, 60, 90, 120]
+                    .map((duration) => DropdownMenuItem(
+                  value: duration,
+                  child: Text("$duration minutes"),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _slotDurations[day] = value!;
+                    _generateSlots(day);
+                  });
+                },
+              ),
+            ),
+            // Generated Slots List
+            if (_generatedSlots[day]!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Generated Slots:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    ..._generatedSlots[day]!.map((slot) => Text(slot)).toList(),
+                  ],
+                ),
+              ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final themeState = context.watch<ThemeBloc>().state;
     final bool isDarkMode = themeState is DarkThemeState;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        backgroundColor: Colors.white,
         forceMaterialTransparency: true,
         title: const Text("Add New Arena"),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -95,8 +266,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
             children: [
               _card(isDarkMode: isDarkMode, title: 'Basic Information', child: Column(
                 children: [
-                  _buildTextField(nameController, "Arena Name",),
-                  _buildTextField(descriptionController, "Description", ),
+                  _buildTextField(nameController, "Arena Name"),
+                  _buildTextField(descriptionController, "Description"),
                   _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket']),
                 ],
               )),
@@ -106,39 +277,25 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                   _buildTextField(contactController, "Contact Number"),
                 ],
               )),
-
+              _card(title: 'Timings', child: _buildSlotConfiguration(), isDarkMode: isDarkMode),
               _card(isDarkMode: isDarkMode, title: 'Media Upload', child: _buildMediaUpload()),
-
-              _card(isDarkMode: isDarkMode, title: 'Facilities', child: _buildMultiCheckboxField(facilities, selectedFacilities,)),
-
+              _card(isDarkMode: isDarkMode, title: 'Facilities', child: _buildMultiCheckboxField(facilities, selectedFacilities)),
               _card(isDarkMode: isDarkMode, title: 'Pricing & Fees', child: Column(
                 children: [
                   _buildPricingStrategy(),
-                  _buildTextField(pricingController, "Base Pricing (Per Hour)", ),
-                  _buildTextField(additionalFeeController, "Additional Services Fee (if any)", ),
+                  _buildTextField(pricingController, "Base Pricing (Per Hour)"),
+                  _buildTextField(additionalFeeController, "Additional Services Fee (if any)"),
                 ],
               )),
-
-              _card(isDarkMode: isDarkMode, title: 'Booking & Slot Configurations', child: Column(
-                children: [
-                  _buildToggleField("Allow Instant Booking?", _instantBooking, (value) => setState(() => _instantBooking = value),),
-                  _buildToggleField("Half Court Available?", _isHalfCourt, (value) => setState(() => _isHalfCourt = value),),
-                  _buildSlotDesign(),
-                ],
-              )),
-
-              _card(isDarkMode: isDarkMode, title: 'Policies', child: _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate'],)),
-
+              _card(isDarkMode: isDarkMode, title: 'Policies', child: _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate'])),
               const SizedBox(height: 20),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Save arena logic
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Arena Added Successfully!"))
+                          const SnackBar(content: Text("Arena Added Successfully!"))
                       );
                       Navigator.pop(context);
                     }
