@@ -41,16 +41,27 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
   bool _dailyPromo = false;
-  final Map<String, int> _slotDurations = {};
+  final Map<String, int> _maxSlotDurations = {};
   final Map<String, List<String>> _generatedSlots = {};
 
   final List<String> _days = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
   ];
 
   // Facilities checkboxes
   final List<String> facilities = [
-    'Parking', 'Showers', 'Lockers', 'Cafeteria', 'Wi-Fi', 'Sauna'
+    'Parking',
+    'Showers',
+    'Lockers',
+    'Cafeteria',
+    'Wi-Fi',
+    'Sauna'
   ];
   final Map<String, bool> selectedFacilities = {};
 
@@ -66,7 +77,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     for (var day in _days) {
       _openingTimes[day] = null;
       _closingTimes[day] = null;
-      _slotDurations[day] = 60; // Default slot duration
+      _maxSlotDurations[day] = 60; // Default max slot duration
       _generatedSlots[day] = [];
     }
   }
@@ -84,7 +95,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   }
 
   // Time Picker Function
-  Future<void> _pickTime(BuildContext context, String day, bool isOpeningTime) async {
+  Future<void> _pickTime(
+      BuildContext context, String day, bool isOpeningTime) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -109,12 +121,13 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
     TimeOfDay startTime = _openingTimes[day]!;
     TimeOfDay endTime = _closingTimes[day]!;
-    int duration = _slotDurations[day]!;
+    int duration = _maxSlotDurations[day]!;
 
     List<String> slots = [];
     TimeOfDay currentTime = startTime;
 
-    while (_timeOfDayToMinutes(currentTime) + duration <= _timeOfDayToMinutes(endTime)) {
+    while (_timeOfDayToMinutes(currentTime) + duration <=
+        _timeOfDayToMinutes(endTime)) {
       TimeOfDay slotEnd = _addMinutesToTime(currentTime, duration);
       slots.add("${_formatTime(currentTime)} - ${_formatTime(slotEnd)}");
       currentTime = slotEnd;
@@ -160,14 +173,19 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                         Expanded(
                           child: TextButton(
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 12),
                               alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(color: Colors.grey), // Add border
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              side: const BorderSide(
+                                  color: Colors.grey), // Add border
                             ),
                             onPressed: () => _pickTime(context, day, true),
                             child: Text(
-                              _openingTimes[day] != null ? _formatTime(_openingTimes[day]!) : "Select Time",
+                              _openingTimes[day] != null
+                                  ? _formatTime(_openingTimes[day]!)
+                                  : "Select Time",
                               style: const TextStyle(color: Colors.black),
                             ),
                           ),
@@ -184,14 +202,19 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                         Expanded(
                           child: TextButton(
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 12),
                               alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(color: Colors.grey), // Add border
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              side: const BorderSide(
+                                  color: Colors.grey), // Add border
                             ),
                             onPressed: () => _pickTime(context, day, false),
                             child: Text(
-                              _closingTimes[day] != null ? _formatTime(_closingTimes[day]!) : "Select Time",
+                              _closingTimes[day] != null
+                                  ? _formatTime(_closingTimes[day]!)
+                                  : "Select Time",
                               style: const TextStyle(color: Colors.black),
                             ),
                           ),
@@ -202,24 +225,35 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 ],
               ),
             ),
-            // Slot Duration Selection
+            // Max Slot Duration Slider
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: DropdownButtonFormField<int>(
-                value: _slotDurations[day],
-                decoration: const InputDecoration(labelText: "Slot Duration"),
-                items: [30, 45, 60, 90, 120]
-                    .map((duration) => DropdownMenuItem(
-                  value: duration,
-                  child: Text("$duration minutes"),
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _slotDurations[day] = value!;
-                    _generateSlots(day);
-                  });
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Max Slot Duration (minutes)",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Slider(
+                    value: _maxSlotDurations[day]!.toDouble(),
+                    min: 30,
+                    max: 60,
+                    divisions: 6, // Ensures step size of 5
+                    label: "${_maxSlotDurations[day]} min",
+                    onChanged: (value) {
+                      setState(() {
+                        _maxSlotDurations[day] = value.toInt();
+                        _generateSlots(day);
+                      });
+                    },
+                  ),
+                  Text(
+                    "${_maxSlotDurations[day]} minutes",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
             // Generated Slots List
@@ -229,7 +263,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Generated Slots:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text("Generated Slots:",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     ..._generatedSlots[day]!.map((slot) => Text(slot)).toList(),
                   ],
                 ),
@@ -239,7 +274,6 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       }).toList(),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -264,39 +298,64 @@ class AddArenaScreenState extends State<AddArenaScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _card(isDarkMode: isDarkMode, title: 'Basic Information', child: Column(
-                children: [
-                  _buildTextField(nameController, "Arena Name"),
-                  _buildTextField(descriptionController, "Description"),
-                  _buildDropdownField("Sport Offered", ['Football', 'Basketball', 'Tennis', 'Cricket']),
-                ],
-              )),
-              _card(isDarkMode: isDarkMode, title: 'Location & Contact', child: Column(
-                children: [
-                  _buildTextField(locationController, "Location"),
-                  _buildTextField(contactController, "Contact Number"),
-                ],
-              )),
-              _card(title: 'Timings', child: _buildSlotConfiguration(), isDarkMode: isDarkMode),
-              _card(isDarkMode: isDarkMode, title: 'Media Upload', child: _buildMediaUpload()),
-              _card(isDarkMode: isDarkMode, title: 'Facilities', child: _buildMultiCheckboxField(facilities, selectedFacilities)),
-              _card(isDarkMode: isDarkMode, title: 'Pricing & Fees', child: Column(
-                children: [
-                  _buildPricingStrategy(),
-                  _buildTextField(pricingController, "Base Pricing (Per Hour)"),
-                  _buildTextField(additionalFeeController, "Additional Services Fee (if any)"),
-                ],
-              )),
-              _card(isDarkMode: isDarkMode, title: 'Policies', child: _buildDropdownField("Cancellation Policy", ['Flexible', 'Moderate'])),
+              _card(
+                  isDarkMode: isDarkMode,
+                  title: 'Basic Information',
+                  child: Column(
+                    children: [
+                      _buildTextField(nameController, "Arena Name"),
+                      _buildTextField(descriptionController, "Description"),
+                      _buildDropdownField("Sport Offered",
+                          ['Football', 'Basketball', 'Tennis', 'Cricket']),
+                    ],
+                  )),
+              _card(
+                  isDarkMode: isDarkMode,
+                  title: 'Location & Contact',
+                  child: Column(
+                    children: [
+                      _buildTextField(locationController, "Location"),
+                      _buildTextField(contactController, "Contact Number"),
+                    ],
+                  )),
+              _card(
+                  title: 'Timings',
+                  child: _buildSlotConfiguration(),
+                  isDarkMode: isDarkMode),
+              _card(
+                  isDarkMode: isDarkMode,
+                  title: 'Media Upload',
+                  child: _buildMediaUpload()),
+              _card(
+                  isDarkMode: isDarkMode,
+                  title: 'Facilities',
+                  child:
+                      _buildMultiCheckboxField(facilities, selectedFacilities)),
+              _card(
+                isDarkMode: isDarkMode,
+                title: 'Pricing & Fees',
+                child: Column(
+                  children: [
+                    _buildIncrementDecrementField(
+                        pricingController, "Base Pricing (Per Hour)"),
+                    _buildTextField(additionalFeeController,
+                        "Additional Services Fee (if any)"),
+                  ],
+                ),
+              ),
+              _card(
+                  isDarkMode: isDarkMode,
+                  title: 'Policies',
+                  child: _buildDropdownField(
+                      "Cancellation Policy", ['Flexible', 'Moderate'])),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Arena Added Successfully!"))
-                      );
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Arena Added Successfully!")));
                       Navigator.pop(context);
                     }
                   },
@@ -310,7 +369,67 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     );
   }
 
-  Widget _card({required String title, required Widget child, required bool isDarkMode}) {
+  Widget _buildIncrementDecrementField(
+      TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    int value = int.tryParse(controller.text) ?? 0;
+                    if (value > 0) {
+                      value -= 5; // Decrease by 5
+                      controller.text = value.toString();
+                    }
+                  });
+                },
+              ),
+              SizedBox(
+                width: 50,
+                child: TextFormField(
+                  controller: controller,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  onChanged: (val) {
+                    if (val.isEmpty) {
+                      controller.text = "0";
+                    }
+                  },
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.green),
+                onPressed: () {
+                  setState(() {
+                    int value = int.tryParse(controller.text) ?? 0;
+                    value += 5; // Increase by 5
+                    controller.text = value.toString();
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _card(
+      {required String title,
+      required Widget child,
+      required bool isDarkMode}) {
     return Card(
       color: isDarkMode ? Colors.grey[850] : Colors.white,
       elevation: 3,
@@ -321,7 +440,11 @@ class AddArenaScreenState extends State<AddArenaScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            Text(title,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
             const Divider(),
             child,
           ],
@@ -336,7 +459,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration:
+            InputDecoration(labelText: label, border: OutlineInputBorder()),
         validator: (value) => value!.isEmpty ? "Required field" : null,
       ),
     );
@@ -347,8 +471,11 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
-        items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+        decoration:
+            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        items: items
+            .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+            .toList(),
         onChanged: (value) {
           setState(() {
             if (label == "Sport Offered") _selectedSport = value;
@@ -400,7 +527,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
         const Text("Slot Design"),
         _buildTimePicker("Opening Time", (time) => _openingTime = time),
         _buildTimePicker("Closing Time", (time) => _closingTime = time),
-        _buildDropdownField("Slot Duration (minutes)", ['30', '45', '60', '90', '120']),
+        _buildDropdownField(
+            "Max Slot Duration (minutes)", ['30', '45', '60', '90', '120']),
       ],
     );
   }
@@ -412,7 +540,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       trailing: IconButton(
         icon: const Icon(Icons.access_time),
         onPressed: () async {
-          TimeOfDay? picked = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+          TimeOfDay? picked = await showTimePicker(
+              context: context, initialTime: TimeOfDay.now());
           if (picked != null) setState(() => onPicked(picked));
         },
       ),
@@ -420,17 +549,18 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   }
 
   // Multi-checkbox field
-  Widget _buildMultiCheckboxField(List<String> options, Map<String, bool> selections) {
+  Widget _buildMultiCheckboxField(
+      List<String> options, Map<String, bool> selections) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...options.map((option) => CheckboxListTile(
-          title: Text(option),
-          value: selections[option],
-          onChanged: (value) {
-            setState(() => selections[option] = value ?? false);
-          },
-        )),
+              title: Text(option),
+              value: selections[option],
+              onChanged: (value) {
+                setState(() => selections[option] = value ?? false);
+              },
+            )),
       ],
     );
   }
@@ -445,7 +575,9 @@ class AddArenaScreenState extends State<AddArenaScreen> {
           label: const Text("Upload Media"),
         ),
         Wrap(
-          children: _mediaFiles.map((file) => Image.file(file, width: 80, height: 80)).toList(),
+          children: _mediaFiles
+              .map((file) => Image.file(file, width: 80, height: 80))
+              .toList(),
         ),
       ],
     );
