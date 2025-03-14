@@ -41,7 +41,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
   bool _dailyPromo = false;
-  final Map<String, int> _maxSlotDurations = {};
+  final Map<String, int> _slotDurations = {};
   final Map<String, List<String>> _generatedSlots = {};
 
   final List<String> _days = [
@@ -67,18 +67,17 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
   // Policies
   String _cancellationPolicy = 'Flexible';
+  final Map<String, double> _slotDurationValues = {}; // New state for slider
 
   @override
   void initState() {
     super.initState();
-    for (var facility in facilities) {
-      selectedFacilities[facility] = false;
-    }
     for (var day in _days) {
-      _openingTimes[day] = null;
-      _closingTimes[day] = null;
-      _maxSlotDurations[day] = 60; // Default max slot duration
-      _generatedSlots[day] = [];
+      _openingTimes.putIfAbsent(day, () => null);
+      _closingTimes.putIfAbsent(day, () => null);
+      _slotDurations.putIfAbsent(day, () => 60);
+      _slotDurationValues.putIfAbsent(day, () => 60.0);
+      _generatedSlots.putIfAbsent(day, () => []); // ✅ Ensure it's always a list
     }
   }
 
@@ -121,8 +120,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
     TimeOfDay startTime = _openingTimes[day]!;
     TimeOfDay endTime = _closingTimes[day]!;
-    int duration = _maxSlotDurations[day]!;
-
+    int duration =
+        (_slotDurationValues[day] ?? 60).toInt(); // Default to 60 min if null
     List<String> slots = [];
     TimeOfDay currentTime = startTime;
 
@@ -225,39 +224,35 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 ],
               ),
             ),
-            // Max Slot Duration Slider
+            // Slot Duration Selection
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Max Slot Duration (minutes)",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  const Text("Max Slot Duration",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   Slider(
-                    value: _maxSlotDurations[day]!.toDouble(),
-                    min: 30,
-                    max: 60,
-                    divisions: 6, // Ensures step size of 5
-                    label: "${_maxSlotDurations[day]} min",
+                    value: _slotDurationValues[day] ??
+                        60.0, // Default value if null
+                    min: 30.0,
+                    max: 60.0,
+                    divisions: 6, // Steps of 5 minutes
+                    label:
+                        "${(_slotDurationValues[day] ?? 60).toInt()} minutes",
                     onChanged: (value) {
                       setState(() {
-                        _maxSlotDurations[day] = value.toInt();
+                        _slotDurationValues[day] = value;
                         _generateSlots(day);
                       });
                     },
-                  ),
-                  Text(
-                    "${_maxSlotDurations[day]} minutes",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
             // Generated Slots List
-            if (_generatedSlots[day]!.isNotEmpty)
+            if (_generatedSlots[day] != null &&
+                _generatedSlots[day]!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -336,8 +331,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 title: 'Pricing & Fees',
                 child: Column(
                   children: [
-                    _buildIncrementDecrementField(
-                        pricingController, "Base Pricing (Per Hour)"),
+                    _buildPricingInput(), // ✅ Corrected function
                     _buildTextField(additionalFeeController,
                         "Additional Services Fee (if any)"),
                   ],
@@ -365,63 +359,6 @@ class AddArenaScreenState extends State<AddArenaScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildIncrementDecrementField(
-      TextEditingController controller, String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    int value = int.tryParse(controller.text) ?? 0;
-                    if (value > 0) {
-                      value -= 5; // Decrease by 5
-                      controller.text = value.toString();
-                    }
-                  });
-                },
-              ),
-              SizedBox(
-                width: 50,
-                child: TextFormField(
-                  controller: controller,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                  onChanged: (val) {
-                    if (val.isEmpty) {
-                      controller.text = "0";
-                    }
-                  },
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add, color: Colors.green),
-                onPressed: () {
-                  setState(() {
-                    int value = int.tryParse(controller.text) ?? 0;
-                    value += 5; // Increase by 5
-                    controller.text = value.toString();
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -497,24 +434,61 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   }
 
   // Pricing Strategy Selection
-  Widget _buildPricingStrategy() {
+  Widget _buildPricingInput() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RadioListTile(
-          title: const Text("Per Hour"),
-          value: "Per Hour",
-          groupValue: _pricingStrategy,
-          onChanged: (value) {
-            setState(() => _pricingStrategy = value.toString());
-          },
-        ),
-        RadioListTile(
-          title: const Text("Per Person Per Hour"),
-          value: "Per Person Per Hour",
-          groupValue: _pricingStrategy,
-          onChanged: (value) {
-            setState(() => _pricingStrategy = value.toString());
-          },
+        const Text("Base Pricing (Per Hour)",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Decrement Button
+            IconButton(
+              icon: const Icon(Icons.remove, color: Colors.red),
+              onPressed: () {
+                setState(() {
+                  int price = int.tryParse(pricingController.text) ?? 0;
+                  if (price > 0) {
+                    pricingController.text =
+                        (price - 5).toString(); // Decrease by 5
+                  }
+                });
+              },
+            ),
+
+            // Price Text Input
+            SizedBox(
+              width: 80,
+              child: TextFormField(
+                controller: pricingController,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    setState(() {
+                      int price = int.tryParse(value) ?? 0;
+                      pricingController.text =
+                          price.toString(); // Ensure valid integer
+                    });
+                  }
+                },
+              ),
+            ),
+
+            // Increment Button
+            IconButton(
+              icon: const Icon(Icons.add, color: Colors.green),
+              onPressed: () {
+                setState(() {
+                  int price = int.tryParse(pricingController.text) ?? 0;
+                  pricingController.text =
+                      (price + 5).toString(); // Increase by 5
+                });
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -556,7 +530,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       children: [
         ...options.map((option) => CheckboxListTile(
               title: Text(option),
-              value: selections[option],
+              value: selections[option] ?? false, // ✅ Default to `false`
               onChanged: (value) {
                 setState(() => selections[option] = value ?? false);
               },

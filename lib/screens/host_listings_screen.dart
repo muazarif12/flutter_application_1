@@ -31,7 +31,38 @@ class HostListingsScreenState extends State<HostListingsScreen> {
       'image': 'assets/sample_image2.jpg',
       'tag': 'Tennis'
     },
+    {
+      'id': 3,
+      'name': 'Cricket Pro Ground',
+      'location': 'Clifton Block 5',
+      'price': 'Rs. 300/hr',
+      'rating': 4.0,
+      'availability': 'Available',
+      'image': 'assets/cricket_ground.jpg',
+      'tag': 'Cricket'
+    },
   ];
+
+  List<String> selectedSports = []; // ✅ Holds selected filters
+
+  // ✅ Get filtered list of arenas
+  List<Map<String, dynamic>> get filteredArenas {
+    if (selectedSports.isEmpty) return arenas; // No filter applied
+    return arenas
+        .where((arena) => selectedSports.contains(arena['tag']))
+        .toList();
+  }
+
+  // ✅ Handle filter selection
+  void toggleFilter(String sport) {
+    setState(() {
+      if (selectedSports.contains(sport)) {
+        selectedSports.remove(sport);
+      } else {
+        selectedSports.add(sport);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,147 +74,182 @@ class HostListingsScreenState extends State<HostListingsScreen> {
         title: const Text("My Arenas"),
         centerTitle: true,
       ),
-      body: arenas.isEmpty
-          ? const Center(child: Text("No arenas added yet."))
-          : ListView.builder(
-        itemCount: arenas.length,
-        itemBuilder: (context, index) {
-          final arena = arenas[index];
-          return Card(
-            color: Colors.white,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            elevation: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        children: [
+          // ✅ Filter Buttons
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        arena['image'],
-                        width: double.infinity,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          arena['tag'],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontFamily: 'Exo2',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        arena['name'],
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Exo2',
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, color: Colors.blue, size: 16),
-                          Text(
-                            arena['location'],
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.green,
-                              fontFamily: 'Exo2',
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            arena['rating'].toString(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Exo2',
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            arena['price'],
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Exo2',
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              arena['availability'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontFamily: 'Exo2',
-                              ),
-                            ),
-                          ),
-                          PopupMenuButton<String>(
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditArenaScreen(arena: arena),
-                                  ),
-                                );
-                              } else if (value == 'delete') {
-                                _deleteArena(arena['id']);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                              const PopupMenuItem(value: 'delete', child: Text('Delete')),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                _filterButton('Cricket', Icons.sports_cricket),
+                _filterButton('Football', Icons.sports_soccer),
+                _filterButton('Tennis', Icons.sports_tennis),
               ],
             ),
-          );
-        },
+          ),
+
+          // ✅ Arena Listings
+          Expanded(
+            child: filteredArenas.isEmpty
+                ? const Center(
+                    child: Text("No arenas found for selected sports."))
+                : ListView.builder(
+                    itemCount: filteredArenas.length,
+                    itemBuilder: (context, index) {
+                      final arena = filteredArenas[index];
+                      return Card(
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        elevation: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    arena['image'],
+                                    width: double.infinity,
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 10,
+                                  left: 10,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      arena['tag'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontFamily: 'Exo2',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    arena['name'],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Exo2',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.location_on,
+                                          color: Colors.blue, size: 16),
+                                      Text(
+                                        arena['location'],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.green,
+                                          fontFamily: 'Exo2',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        arena['rating'].toString(),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Exo2',
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        arena['price'],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Exo2',
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: arena['availability'] ==
+                                                  'Limited Slots'
+                                              ? Colors.red
+                                              : Colors.blue,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          arena['availability'],
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'Exo2',
+                                          ),
+                                        ),
+                                      ),
+                                      PopupMenuButton<String>(
+                                        onSelected: (value) {
+                                          if (value == 'edit') {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditArenaScreen(
+                                                        arena: arena),
+                                              ),
+                                            );
+                                          } else if (value == 'delete') {
+                                            _deleteArena(arena['id']);
+                                          }
+                                        },
+                                        itemBuilder: (context) => [
+                                          const PopupMenuItem(
+                                              value: 'edit',
+                                              child: Text('Edit')),
+                                          const PopupMenuItem(
+                                              value: 'delete',
+                                              child: Text('Delete')),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -198,6 +264,36 @@ class HostListingsScreenState extends State<HostListingsScreen> {
     );
   }
 
+  // ✅ Filter Button Widget
+  Widget _filterButton(String sport, IconData icon) {
+    bool isSelected = selectedSports.contains(sport);
+    return GestureDetector(
+      onTap: () => toggleFilter(sport),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.green[100] : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isSelected ? Colors.green : Colors.grey),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? Colors.green : Colors.black),
+            const SizedBox(width: 5),
+            Text(
+              sport,
+              style: TextStyle(
+                color: isSelected ? Colors.green : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ✅ Delete Arena
   void _deleteArena(int id) {
     setState(() {
       arenas.removeWhere((arena) => arena['id'] == id);
