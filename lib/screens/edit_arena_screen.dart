@@ -281,8 +281,9 @@ class EditArenaScreenState extends State<EditArenaScreen> {
           setState(() {
             if (label == "Sport Offered") _selectedSport = value;
             if (label == "Cancellation Policy") _cancellationPolicy = value!;
-            if (label == "Max SLot Duration (minutes)")
+            if (label == "Max SLot Duration (minutes)") {
               _selectedMaxSlotDuration = int.tryParse(value!);
+            }
           });
         },
         validator: (value) => value == null ? "Required field" : null,

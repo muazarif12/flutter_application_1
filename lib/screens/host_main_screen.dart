@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../bloc/theme/theme_bloc.dart';
 import '../bloc/theme/theme_state.dart';
 import 'host_listings_screen.dart';

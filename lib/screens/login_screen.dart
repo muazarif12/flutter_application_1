@@ -1,177 +1,221 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isLoading = false; // To manage the loading state
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        padding: const EdgeInsets.all(20) ,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: Colors.green,
+      body: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 107,
-                backgroundColor: Colors.green,
-                child: ClipOval(
-                  child: Image.asset(
-                    width: 210,
-                    'assets/logo.jpeg',
-                    fit: BoxFit.contain,
-                  ),
+              Transform.translate(
+                offset: const Offset(-10, -30),
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 25,),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelStyle: GoogleFonts.exo2(),
-                  labelText: 'Email or Phone Number',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-
-              // Password Input
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelStyle: GoogleFonts.exo2(),
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 10),
-
-              // Forgot Password Link
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // Navigate to Forgot Password Screen
-                    Navigator.pushNamed(context, '/forgot-password');
-                  },
-                  child: Text('Forgot Password?', style: GoogleFonts.exo2(),),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Login Button
-              ElevatedButton(
-                onPressed: () async {
-  final userData = await loginUser(
-    email: emailController.text,
-    password: passwordController.text,
-  );
-
-  if (userData != null) {
-    String role = userData['role'];
-    if (role == 'user') {
-      Navigator.pushReplacementNamed(context, '/home'); // Regular user home screen
-    } else if (role == 'host') {
-      Navigator.pushReplacementNamed(context, '/host-home'); // Host dashboard
-    }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Login failed. Please try again.'),
-      ),
-    );
-  }
-},
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: Colors.green, // Button color
-                ),
-                child: Text(
-                  'Login',
-                  style: GoogleFonts.exo2(fontSize: 18, color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Or Divider
-              const Row(
-                children: [
-                  Expanded(child: Divider()),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text('OR'),
-                  ),
-                  Expanded(child: Divider()),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // 3rd Party Login Buttons
-              Text(
-                'Sign in with',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.exo2(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 10),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Google Login
-                  IconButton(
-                    onPressed: () {
-                      // Handle Google login
-                    },
-                    icon: Image.asset('assets/google.png', height: 40),
-                  ),
-                  const SizedBox(width: 20),
-
-                  // Facebook Login
-                  IconButton(
-                    onPressed: () {
-                      // Handle Facebook login
-                    },
-                    icon: Image.asset('assets/facebook.png', height: 40),
-                  ),
-                  const SizedBox(width: 20),
-
-                  // iCloud Login
-                  IconButton(
-                    onPressed: () {
-                      // Handle iCloud login
-                    },
-                    icon: Image.asset('assets/icloud.png', height: 40),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Sign Up Prompt
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account?", style: GoogleFonts.exo2(),),
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to Sign Up Screen
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: Text('Sign Up', style: GoogleFonts.exo2(),),
-                  ),
-                ],
-              ),
+              const Spacer(), // Pushes the login section to the bottom
             ],
           ),
-        ),
+
+          /// Login Container at Bottom
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(40),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(80),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Login',
+                      style: TextStyle(fontSize: 32),
+                    ),
+                    const SizedBox(height: 25),
+
+                    /// Email Input
+                    SizedBox(
+                      height: 45,
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelStyle: GoogleFonts.exo2(),
+                          labelText: 'Email or Phone Number',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Password Input
+                    SizedBox(
+                      height: 45,
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelStyle: GoogleFonts.exo2(),
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    /// Forgot Password
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/forgot-password');
+                        },
+                        child: Text('Forgot Password?', style: GoogleFonts.exo2()),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Login Button with loading effect
+                    SizedBox(
+                      height: 45,
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                          setState(() {
+                            isLoading = true; // Start loading
+                          });
+
+                          final userData = await loginUser(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          );
+
+                          setState(() {
+                            isLoading = false; // Stop loading
+                          });
+
+                          if (userData != null) {
+                            String role = userData['role'];
+                            if (role == 'user') {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            } else if (role == 'host') {
+                              Navigator.pushReplacementNamed(context, '/host-home');
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Login failed. Please try again.'),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                            : Text(
+                          'Login',
+                          style: GoogleFonts.exo2(fontSize: 15, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// OR Divider
+                    const Row(
+                      children: [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text('OR'),
+                        ),
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Social Login
+                    Center(
+                      child: Text(
+                        'Sign in with',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.exo2(fontSize: 16, color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Image.asset('assets/google.png', height: 40),
+                        ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Image.asset('assets/facebook.png', height: 40),
+                        ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Image.asset('assets/icloud.png', height: 40),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Sign Up Prompt
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?", style: GoogleFonts.exo2()),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          child: Text('Sign Up', style: GoogleFonts.exo2()),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -43,6 +43,11 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   bool _dailyPromo = false;
   final Map<String, int> _slotDurations = {};
   final Map<String, List<String>> _generatedSlots = {};
+  final Map<String, bool> _selectedDays = {}; // New: To track selected days
+  bool _sameTimingEnabled = false;
+  TimeOfDay? _globalOpeningTime;
+  TimeOfDay? _globalClosingTime;
+
 
   final List<String> _days = [
     'Monday',
@@ -73,13 +78,15 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   void initState() {
     super.initState();
     for (var day in _days) {
-      _openingTimes.putIfAbsent(day, () => null);
-      _closingTimes.putIfAbsent(day, () => null);
+      _selectedDays[day] = false; // ✅ Ensures all days are initialized
+      _openingTimes[day] = null;
+      _closingTimes[day] = null;
+      _generatedSlots[day] = [];
       _slotDurations.putIfAbsent(day, () => 60);
       _slotDurationValues.putIfAbsent(day, () => 60.0);
-      _generatedSlots.putIfAbsent(day, () => []); // ✅ Ensure it's always a list
     }
   }
+
 
   // Image Picker Function
   Future<void> _pickMedia() async {
@@ -93,9 +100,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     }
   }
 
-  // Time Picker Function
   Future<void> _pickTime(
-      BuildContext context, String day, bool isOpeningTime) async {
+      BuildContext context, String? day, bool isOpeningTime) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -103,30 +109,44 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
     if (picked != null) {
       setState(() {
-        if (isOpeningTime) {
-          _openingTimes[day] = picked;
-        } else {
-          _closingTimes[day] = picked;
+        if (day == null) { // Global timing case
+          if (isOpeningTime) {
+            _globalOpeningTime = picked;
+          } else {
+            _globalClosingTime = picked;
+          }
+        } else { // Day-specific timing
+          if (isOpeningTime) {
+            _openingTimes[day] = picked;
+          } else {
+            _closingTimes[day] = picked;
+          }
         }
       });
 
-      _generateSlots(day);
+      if (day != null) {
+        _generateSlots(day);
+      }
     }
   }
 
+
   // Generate Slots Based on Opening, Closing Time & Duration
   void _generateSlots(String day) {
-    if (_openingTimes[day] == null || _closingTimes[day] == null) return;
+    if (_openingTimes[day] == null || _closingTimes[day] == null) {
+      setState(() {
+        _generatedSlots[day] = [];
+      });
+      return;
+    }
 
     TimeOfDay startTime = _openingTimes[day]!;
     TimeOfDay endTime = _closingTimes[day]!;
-    int duration =
-        (_slotDurationValues[day] ?? 60).toInt(); // Default to 60 min if null
+    int duration = 60; // Default slot duration
     List<String> slots = [];
     TimeOfDay currentTime = startTime;
 
-    while (_timeOfDayToMinutes(currentTime) + duration <=
-        _timeOfDayToMinutes(endTime)) {
+    while (_timeOfDayToMinutes(currentTime) + duration <= _timeOfDayToMinutes(endTime)) {
       TimeOfDay slotEnd = _addMinutesToTime(currentTime, duration);
       slots.add("${_formatTime(currentTime)} - ${_formatTime(slotEnd)}");
       currentTime = slotEnd;
@@ -136,6 +156,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       _generatedSlots[day] = slots;
     });
   }
+
 
   // Convert TimeOfDay to Minutes
   int _timeOfDayToMinutes(TimeOfDay time) {
@@ -153,120 +174,124 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period == DayPeriod.am ? "AM" : "PM"}";
   }
 
+  // Apply Same Timing to Selected Days
+  void _applySameTiming() {
+    setState(() {
+      for (var day in _days) {
+        if (_selectedDays[day] == true) {
+          if (_globalOpeningTime != null && _globalClosingTime != null) {
+            _openingTimes[day] = _globalOpeningTime;
+            _closingTimes[day] = _globalClosingTime;
+            _generateSlots(day);
+          }
+        } else {
+          _openingTimes[day] = null;
+          _closingTimes[day] = null;
+          _generatedSlots[day] = [];
+        }
+      }
+    });
+  }
+
+
+
+
   Widget _buildSlotConfiguration() {
     return Column(
-      children: _days.map((day) {
-        return ExpansionTile(
-          title: Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Opening Time
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Text("Opening: "),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(
-                                  color: Colors.grey), // Add border
-                            ),
-                            onPressed: () => _pickTime(context, day, true),
-                            child: Text(
-                              _openingTimes[day] != null
-                                  ? _formatTime(_openingTimes[day]!)
-                                  : "Select Time",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Space between
-                  // Closing Time
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Text("Closing: "),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(
-                                  color: Colors.grey), // Add border
-                            ),
-                            onPressed: () => _pickTime(context, day, false),
-                            child: Text(
-                              _closingTimes[day] != null
-                                  ? _formatTime(_closingTimes[day]!)
-                                  : "Select Time",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      children: [
+        SwitchListTile(
+          title: const Text("Set Same Timing for Selected Days"),
+          value: _sameTimingEnabled,
+          onChanged: (value) {
+            setState(() {
+              _sameTimingEnabled = value;
+            });
+          },
+        ),
+
+        if (_sameTimingEnabled) ...[
+          Row(
+            children: [
+              const Text("Opening: "),
+              IconButton(
+                icon: const Icon(Icons.access_time, color: Colors.blue),
+                onPressed: () => _pickTime(context, null, true),
               ),
-            ),
-            // Slot Duration Selection
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Text(_globalOpeningTime != null ? _formatTime(_globalOpeningTime!) : "Not Set"),
+            ],
+          ),
+          Row(
+            children: [
+              const Text("Closing: "),
+              IconButton(
+                icon: const Icon(Icons.access_time, color: Colors.red),
+                onPressed: () => _pickTime(context, null, false),
+              ),
+              Text(_globalClosingTime != null ? _formatTime(_globalClosingTime!) : "Not Set"),
+            ],
+          ),
+          ElevatedButton.icon(
+            onPressed: (_globalOpeningTime != null && _globalClosingTime != null) ? _applySameTiming : null,
+            icon: const Icon(Icons.check),
+            label: const Text("Apply Timing to Selected Days"),
+          ),
+        ],
+
+        Column(
+          children: _days.map((day) {
+            return ExpansionTile(
+              title: Row(
                 children: [
-                  const Text("Max Slot Duration",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Slider(
-                    value: _slotDurationValues[day] ??
-                        60.0, // Default value if null
-                    min: 30.0,
-                    max: 60.0,
-                    divisions: 6, // Steps of 5 minutes
-                    label:
-                        "${(_slotDurationValues[day] ?? 60).toInt()} minutes",
+                  Checkbox(
+                    value: _selectedDays[day],
                     onChanged: (value) {
                       setState(() {
-                        _slotDurationValues[day] = value;
-                        _generateSlots(day);
+                        _selectedDays[day] = value ?? false;
+                        if (!value!) {
+                          _openingTimes[day] = null;
+                          _closingTimes[day] = null;
+                          _generatedSlots[day] = [];
+                        }
                       });
                     },
                   ),
+                  Text(day),
                 ],
               ),
-            ),
-            // Generated Slots List
-            if (_generatedSlots[day] != null &&
-                _generatedSlots[day]!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    const Text("Generated Slots:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    ..._generatedSlots[day]!.map((slot) => Text(slot)).toList(),
+                    const Text("Opening: "),
+                    IconButton(
+                      icon: const Icon(Icons.access_time, color: Colors.blue),
+                      onPressed: () => _pickTime(context, day, true),
+                    ),
+                    Text(_openingTimes[day] != null ? _formatTime(_openingTimes[day]!) : "Not Set"),
                   ],
                 ),
-              ),
-          ],
-        );
-      }).toList(),
+                Row(
+                  children: [
+                    const Text("Closing: "),
+                    IconButton(
+                      icon: const Icon(Icons.access_time, color: Colors.red),
+                      onPressed: () => _pickTime(context, day, false),
+                    ),
+                    Text(_closingTimes[day] != null ? _formatTime(_closingTimes[day]!) : "Not Set"),
+                  ],
+                ),
+                if (_generatedSlots[day]!.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Generated Slots:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ..._generatedSlots[day]!.map((slot) => Text(slot)),
+                    ],
+                  ),
+              ],
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

@@ -30,7 +30,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 _buildIntroSlide(
                   title: "Welcome to ",
                   subtitle: "The only sports booking app you will need",
-                  image: 'assets/logo.jpeg', image2: 'assets/intro.jpg'
+                  image: 'assets/logo.png', image2: 'assets/intro.jpg'
                 ),
               Padding(
                 padding: const EdgeInsets.all(16.0),

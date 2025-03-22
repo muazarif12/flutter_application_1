@@ -31,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
               backgroundColor: Colors.green,
               child: ClipOval(
                 child: Image.asset(
-                  'assets/logo.jpeg',
+                  'assets/logo.png',
                   width: 150,
                   fit: BoxFit.contain,
                 ),
