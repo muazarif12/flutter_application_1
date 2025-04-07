@@ -19,7 +19,8 @@ exports.registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       full_name,
-      phone_number
+      phone_number,
+      role: 'user'
     });
 
     res.status(201).json({
@@ -62,7 +63,7 @@ exports.loginUser = async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      role: 'user',
+      role: user.role,
       user: {
         id: user.id,
         email: user.email,
