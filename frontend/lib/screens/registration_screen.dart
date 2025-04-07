@@ -1,8 +1,21 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-
-class RegistrationScreen extends StatelessWidget {
+class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
+
+  @override
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
+}
+
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final usernameController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   void _showTermsAndConditionsDialog(BuildContext context) {
     showDialog(
@@ -10,10 +23,10 @@ class RegistrationScreen extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text('Terms and Conditions'),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   '1. Introduction',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -39,11 +52,10 @@ class RegistrationScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                // Close the dialog and proceed to Home Screen
-                Navigator.pop(context); // Close the dialog
-                Navigator.pushReplacementNamed(context, '/home'); // Navigate to Home Screen
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/home');
               },
-              child: const Text('Agree'),
+              child: Text('Agree'),
             ),
           ],
         );
@@ -52,125 +64,132 @@ class RegistrationScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // Controllers for input fields
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+  void dispose() {
+    usernameController.dispose();
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height*0.1,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
             TextFormField(
-              decoration: InputDecoration(
+              controller: usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: fullNameController,
+              decoration: const InputDecoration(
                 labelText: 'Full Name',
-                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 20),
-
-            // Email Input
             TextFormField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
-                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 20),
-
-            // Phone Number Input
             TextFormField(
-              decoration: InputDecoration(
+              controller: phoneController,
+              decoration: const InputDecoration(
                 labelText: 'Phone Number',
                 border: OutlineInputBorder(),
-                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 prefixIcon: Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 20),
-
-            // Password Input
             TextFormField(
               controller: passwordController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
-                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
-
-            // Confirm Password Input
             TextFormField(
-              decoration: InputDecoration(
+              controller: confirmPasswordController,
+              decoration: const InputDecoration(
                 labelText: 'Confirm Password',
-                labelStyle: TextStyle(fontFamily: 'Exo2',),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
-
-            // Sign Up Button
             ElevatedButton(
               onPressed: () async {
-                // Perform registration logic
+                if (passwordController.text != confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Passwords do not match')),
+                  );
+                  return;
+                }
+
                 bool registrationSuccess = await registerUser(
+                  username: usernameController.text,
                   email: emailController.text,
                   password: passwordController.text,
+                  fullName: fullNameController.text,
+                  phoneNumber: phoneController.text,
                 );
 
                 if (registrationSuccess) {
-                  if (context.mounted) {
-                    _showTermsAndConditionsDialog(context);
-                  }
+                  if (context.mounted) _showTermsAndConditionsDialog(context);
                 } else {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Registration failed. Please try again.'),
-                      ),
+                          content:
+                              Text('Registration failed. Please try again.')),
                     );
                   }
                 }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.green, // Button color
+                backgroundColor: Colors.green,
               ),
-              child: Text(
+              child: const Text(
                 'Sign Up',
-                style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: 'Exo2',),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
             const SizedBox(height: 20),
-
-            // Already Have an Account? Login Prompt
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account?", style: TextStyle(fontFamily: 'Exo2',),),
+                const Text("Already have an account?"),
                 TextButton(
                   onPressed: () {
-                    // Navigate back to Login Screen
                     Navigator.pop(context);
                   },
-                  child: Text('Login', style: TextStyle(fontFamily: 'Exo2',),),
+                  child: const Text('Login'),
                 ),
               ],
             ),
@@ -181,9 +200,25 @@ class RegistrationScreen extends StatelessWidget {
   }
 }
 
-// Dummy function for registration logic
-Future<bool> registerUser({required String email, required String password}) async {
-  // Simulate a successful registration
-  await Future.delayed(const Duration(seconds: 1));
-  return true; // Replace with actual registration logic
+Future<bool> registerUser({
+  required String username,
+  required String email,
+  required String password,
+  required String fullName,
+  required String phoneNumber,
+}) async {
+  final response = await http.post(
+    Uri.parse(
+        'http://10.0.2.2:5600/api/auth/register'), // ← or your IP if on real device
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'username': username,
+      'email': email,
+      'password': password,
+      'full_name': fullName,
+      'phone_number': phoneNumber,
+    }),
+  );
+
+  return response.statusCode == 201;
 }

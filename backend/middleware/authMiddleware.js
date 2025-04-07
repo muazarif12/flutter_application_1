@@ -2,15 +2,20 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.split(" ")[1]; // Bearer <token>
-  if (!token) return res.status(401).json({ error: 'Access denied' });
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authorization token missing or invalid' });
+  }
+
+  const token = authHeader.split(' ')[1];
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Now you can access `req.user.id` or `req.user.role`
     next();
-  } catch {
-    res.status(400).json({ error: 'Invalid token' });
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid or expired token' });
   }
 };
 
