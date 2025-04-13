@@ -10,6 +10,10 @@ MERGED from [:image_picker_android] C:\Users\imtiaz.arif\mina_rena\flutter_appli
 MERGED from [:image_picker_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:8:5-32:19
 MERGED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:7:5-12:19
 MERGED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:7:5-12:19
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:22:5-38:19
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:22:5-38:19
+MERGED from [com.google.android.gms:play-services-fido:20.0.1] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\285d42a9342addc42be862a864722937\transformed\jetified-play-services-fido-20.0.1\AndroidManifest.xml:7:5-8:19
+MERGED from [com.google.android.gms:play-services-fido:20.0.1] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\285d42a9342addc42be862a864722937\transformed\jetified-play-services-fido-20.0.1\AndroidManifest.xml:7:5-8:19
 MERGED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:19:5-23:19
 MERGED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:19:5-23:19
 MERGED from [com.google.android.gms:play-services-tasks:18.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\be864de30ca1a1936f6ea4fae299085e\transformed\jetified-play-services-tasks-18.1.0\AndroidManifest.xml:5:5-20
@@ -45,7 +49,12 @@ MERGED from [com.google.android.gms:play-services-location:21.2.0] C:\Users\imti
 MERGED from [:image_picker_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-34:12
 MERGED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-14:12
 MERGED from [:flutter_plugin_android_lifecycle] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\flutter_plugin_android_lifecycle\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-7:12
+MERGED from [:google_sign_in_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:path_provider_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:17:1-40:12
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\d8f271702fd4be925f8c4fd171517158\transformed\jetified-play-services-auth-api-phone-18.0.2\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\1528f73a6b052f916a14a392bd1ad9b2\transformed\jetified-play-services-auth-base-18.0.10\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-fido:20.0.1] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\285d42a9342addc42be862a864722937\transformed\jetified-play-services-fido-20.0.1\AndroidManifest.xml:2:1-10:12
 MERGED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:16:1-24:12
 MERGED from [com.google.android.gms:play-services-tasks:18.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\be864de30ca1a1936f6ea4fae299085e\transformed\jetified-play-services-tasks-18.1.0\AndroidManifest.xml:2:1-6:12
 MERGED from [com.google.android.gms:play-services-basement:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\e622a41776a67c52fe2cb732f7461583\transformed\jetified-play-services-basement-18.3.0\AndroidManifest.xml:16:1-26:12
@@ -54,10 +63,8 @@ MERGED from [androidx.activity:activity:1.9.3] C:\Users\imtiaz.arif\.gradle\cach
 MERGED from [androidx.browser:browser:1.8.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\63b260095d889c7ec725b59239f2c223\transformed\browser-1.8.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.window:window:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\50c546b25163d167355d54180172d0c2\transformed\jetified-window-1.2.0\AndroidManifest.xml:17:1-31:12
 MERGED from [androidx.window:window-java:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\418fb4403d68cbb703702541c9c3a466\transformed\jetified-window-java-1.2.0\AndroidManifest.xml:17:1-21:12
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\09ca8f95cc8b6eba0306abaf20500893\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\f0c180d1050d7fe36e60faae72a3cd42\transformed\loader-1.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\e431f2f769850d980e93e5b74450cec4\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\01ca3ddfa995ed518dc527712ef8b6ce\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\88edbfd3a58a04d4c2d5731e24ee2a4b\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\ed9ea2deb20f7f6b792ae8c0973d7ee1\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\6f5d3c3c6ab4941b7b4ecd900b5e71f5\transformed\lifecycle-viewmodel-2.7.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a84a3983f21ec923db3f3476473a9679\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:2:1-7:12
@@ -99,6 +106,8 @@ ADDED from C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\android
 		ADDED from C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\android\app\src\main\AndroidManifest.xml:42:19-48
 uses-permission#android.permission.INTERNET
 ADDED from C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\android\app\src\debug\AndroidManifest.xml:6:5-66
+MERGED from [:google_sign_in_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\debug\AndroidManifest.xml:7:5-67
+MERGED from [:google_sign_in_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\debug\AndroidManifest.xml:7:5-67
 	android:name
 		ADDED from C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\android\app\src\debug\AndroidManifest.xml:6:22-64
 uses-sdk
@@ -115,8 +124,18 @@ MERGED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_appli
 MERGED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:flutter_plugin_android_lifecycle] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\flutter_plugin_android_lifecycle\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:flutter_plugin_android_lifecycle] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\flutter_plugin_android_lifecycle\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:google_sign_in_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:google_sign_in_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:path_provider_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:path_provider_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\d8f271702fd4be925f8c4fd171517158\transformed\jetified-play-services-auth-api-phone-18.0.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\d8f271702fd4be925f8c4fd171517158\transformed\jetified-play-services-auth-api-phone-18.0.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\1528f73a6b052f916a14a392bd1ad9b2\transformed\jetified-play-services-auth-base-18.0.10\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\1528f73a6b052f916a14a392bd1ad9b2\transformed\jetified-play-services-auth-base-18.0.10\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-fido:20.0.1] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\285d42a9342addc42be862a864722937\transformed\jetified-play-services-fido-20.0.1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-fido:20.0.1] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\285d42a9342addc42be862a864722937\transformed\jetified-play-services-fido-20.0.1\AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:18:5-43
 MERGED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:18:5-43
 MERGED from [com.google.android.gms:play-services-tasks:18.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\be864de30ca1a1936f6ea4fae299085e\transformed\jetified-play-services-tasks-18.1.0\AndroidManifest.xml:4:5-43
@@ -133,14 +152,10 @@ MERGED from [androidx.window:window:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\t
 MERGED from [androidx.window:window:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\50c546b25163d167355d54180172d0c2\transformed\jetified-window-1.2.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.window:window-java:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\418fb4403d68cbb703702541c9c3a466\transformed\jetified-window-java-1.2.0\AndroidManifest.xml:19:5-44
 MERGED from [androidx.window:window-java:1.2.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\418fb4403d68cbb703702541c9c3a466\transformed\jetified-window-java-1.2.0\AndroidManifest.xml:19:5-44
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\09ca8f95cc8b6eba0306abaf20500893\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\09ca8f95cc8b6eba0306abaf20500893\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\f0c180d1050d7fe36e60faae72a3cd42\transformed\loader-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\f0c180d1050d7fe36e60faae72a3cd42\transformed\loader-1.1.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\e431f2f769850d980e93e5b74450cec4\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\e431f2f769850d980e93e5b74450cec4\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\01ca3ddfa995ed518dc527712ef8b6ce\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\01ca3ddfa995ed518dc527712ef8b6ce\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\88edbfd3a58a04d4c2d5731e24ee2a4b\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\88edbfd3a58a04d4c2d5731e24ee2a4b\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\ed9ea2deb20f7f6b792ae8c0973d7ee1\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\ed9ea2deb20f7f6b792ae8c0973d7ee1\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\6f5d3c3c6ab4941b7b4ecd900b5e71f5\transformed\lifecycle-viewmodel-2.7.0\AndroidManifest.xml:20:5-44
@@ -239,6 +254,26 @@ ADDED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_applic
 		ADDED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-71
 	android:name
 		ADDED from [:url_launcher_android] C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:9:13-74
+activity#com.google.android.gms.auth.api.signin.internal.SignInHubActivity
+ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:23:9-27:75
+	android:excludeFromRecents
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:25:13-46
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:26:13-37
+	android:theme
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:27:13-72
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:24:13-93
+service#com.google.android.gms.auth.api.signin.RevocationBoundService
+ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:33:9-37:51
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:35:13-36
+	android:visibleToInstantApps
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:37:13-48
+	android:permission
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:36:13-107
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\22cec3ffc179bebe23816044910f036b\transformed\jetified-play-services-auth-21.0.0\AndroidManifest.xml:34:13-89
 activity#com.google.android.gms.common.api.GoogleApiActivity
 ADDED from [com.google.android.gms:play-services-base:18.3.0] C:\Users\imtiaz.arif\.gradle\caches\transforms-3\a8960f6861be4d7a17f0ddca6075b913\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:20:9-22:45
 	android:exported

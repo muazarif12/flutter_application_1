@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.flutter_application_1.app-mergeDebugResources-27:/values-eu/values-eu.xml",
+            "outputFile": "com.example.flutter_application_1.app-mergeDebugResources-26:/values-eu/values-eu.xml",
             "map": [
                 {
                     "source": "C:\\Users\\imtiaz.arif\\.gradle\\caches\\transforms-3\\9d6354b915c2188822c20b5229649c51\\transformed\\core-1.13.1\\res\\values-eu\\values-eu.xml",

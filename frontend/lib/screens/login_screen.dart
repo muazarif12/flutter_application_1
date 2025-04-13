@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -114,18 +117,10 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      handleGoogleSignIn(context);
+                    },
                     icon: Image.asset('assets/google.png', height: 40),
-                  ),
-                  const SizedBox(width: 20),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset('assets/facebook.png', height: 40),
-                  ),
-                  const SizedBox(width: 20),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset('assets/icloud.png', height: 40),
                   ),
                 ],
               ),
@@ -136,7 +131,8 @@ class LoginScreen extends StatelessWidget {
                   Text("Don't have an account?", style: GoogleFonts.exo2()),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/register');
+                      Navigator.pushNamed(context,
+                          '/register'); // Navigate to the registration screen
                     },
                     child: Text('Sign Up', style: GoogleFonts.exo2()),
                   ),
@@ -162,5 +158,62 @@ Future<Map<String, dynamic>?> loginUser(
     return jsonDecode(response.body);
   } else {
     return null;
+  }
+}
+
+// Google Sign-In Setup
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: ['email', 'profile'],
+  // Optional: Force web client ID for testing (remove later)
+  // clientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+);
+
+Future<void> handleGoogleSignIn(BuildContext context) async {
+  try {
+    print('Initiating Google Sign-In...');
+
+    // Force sign out first to clear any existing session
+    await _googleSignIn.signOut();
+
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      print('User cancelled sign-in');
+      return;
+    }
+
+    print('User email: ${googleUser.email}');
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    print('ID Token: ${googleAuth.idToken}');
+    print('Access Token: ${googleAuth.accessToken}');
+
+    if (googleAuth.idToken == null) {
+      throw Exception('ID Token is null - check configuration');
+    }
+
+    // Send to your Node.js backend
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:5600/api/auth/google-sign-in'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${googleAuth.idToken}'
+      },
+      // You might want to send both tokens
+      body: jsonEncode({
+        'idToken': googleAuth.idToken,
+        'accessToken': googleAuth.accessToken,
+        'email': googleUser.email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final userData = jsonDecode(response.body);
+      // Handle successful login
+    } else {
+      print('Backend error: ${response.body}');
+    }
+  } catch (error) {
+    print('Google Sign-In Error: $error');
   }
 }
