@@ -20,6 +20,12 @@ app.use('/api/admin', adminRoutes);
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const hostRoutes = require('./routes/hostRoutes');
+app.use('/api/host', hostRoutes);
+
+// const slotRoutes = require('./routes/hostRoutes');///// these are also for host so hostRoutes should be merged with this
+// app.use('/api/slots', slotRoutes);
+
 // 404 handler
 app.use((req, res, next) => {
   next(createError(404, 'Route Not Found'));
