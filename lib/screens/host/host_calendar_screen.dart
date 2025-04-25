@@ -23,7 +23,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
       'customer': 'John Doe',
       'amount': 200,
       'isHalfCourt': false,
-      'date': DateTime(2025, 3, 23, 10, 0),
+      'date': DateTime(2025, 4, 23, 10, 0),
       'duration': 60,
       'isBlocked': false,
     },
@@ -32,7 +32,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
       'customer': 'John Doe',
       'amount': 200,
       'isHalfCourt': false,
-      'date': DateTime(2025, 3, 22, 10, 0),
+      'date': DateTime(2025, 4, 22, 10, 0),
       'duration': 60,
       'isBlocked': false,
     },
@@ -41,7 +41,16 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
       'customer': 'Jane Smith',
       'amount': 150,
       'isHalfCourt': true,
-      'date': DateTime(2025, 3, 22, 12, 22), // Second slot on same day
+      'date': DateTime(2025, 4, 22, 12, 22), // Second slot on same day
+      'duration': 60,
+      'isBlocked': false,
+    },
+    {
+      'arena': 'Arena 2',
+      'customer': 'Smith',
+      'amount': 150,
+      'isHalfCourt': true,
+      'date': DateTime(2025, 4, 22, 12, 22), // Second slot on same day
       'duration': 60,
       'isBlocked': false,
     },
@@ -139,35 +148,54 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
         dataSource: BookingDataSource(_getCalendarAppointments()),
         appointmentBuilder: (context, calendarAppointmentDetails) {
           if (_viewMode == CalendarView.month) {
-            // Count the number of appointments for the given day
+            // Month view indicator logic (unchanged)
             DateTime appointmentDate = calendarAppointmentDetails.appointments.first.startTime;
-
-            // Print and count the number of indicators being created
             int appointmentCount = _countAppointmentsForDay(appointmentDate);
-            print("Appointments for ${appointmentDate.day}-${appointmentDate.month}-${appointmentDate.year}: $appointmentCount");
-
-            // Return a small indicator if there are appointments for that day
             return Container(
-              width: 10,  // Small circle for the indicator
+              width: 10,
               height: 10,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.black, // Indicator color
+                color: Colors.black,
               ),
             );
           } else {
+            // For Week/Day/Timeline views
             final Appointment appointment = calendarAppointmentDetails.appointments.first;
-            return Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: appointment.color,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                appointment.subject,
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            );
+            final bool isHalfCourt = appointment.subject.contains("(1/2)");
+
+            // Check if there are overlapping half-court bookings
+            final List<Appointment> overlappingAppointments = _getOverlappingAppointments(appointment);
+
+            if (isHalfCourt && overlappingAppointments.length >= 2) {
+              // Two half-court bookings at the same time → split the cell
+              return Row(
+                children: [
+                  Expanded(
+                    child: _buildHalfCourtAppointment(overlappingAppointments[0], isLeft: true),
+                  ),
+                  Expanded(
+                    child: _buildHalfCourtAppointment(overlappingAppointments[1], isLeft: false),
+                  ),
+                ],
+              );
+            } else if (isHalfCourt) {
+              // Single half-court booking → show on the left
+              return _buildHalfCourtAppointment(appointment, isLeft: true);
+            } else {
+              // Full-court booking → take full width
+              return Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: appointment.color,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  appointment.subject,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              );
+            }
           }
         },
         timeSlotViewSettings: TimeSlotViewSettings(
@@ -192,6 +220,32 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
             }
           }
         },
+      ),
+    );
+  }
+
+  // Get overlapping appointments (for the same time slot)
+  List<Appointment> _getOverlappingAppointments(Appointment appointment) {
+    return _getCalendarAppointments().where((a) {
+      return a.startTime == appointment.startTime &&
+          a.endTime == appointment.endTime &&
+          a.subject.contains("(1/2)");
+    }).toList();
+  }
+
+// Build a half-width appointment widget
+  Widget _buildHalfCourtAppointment(Appointment appointment, {required bool isLeft}) {
+    return Container(
+      margin: EdgeInsets.only(right: isLeft ? 2 : 0, left: isLeft ? 0 : 2),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: appointment.color,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        appointment.subject,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

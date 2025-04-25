@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_event.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_event.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class HostSettingsScreen extends StatelessWidget {
   const HostSettingsScreen({super.key});
@@ -26,14 +26,23 @@ class HostSettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 50),
-            CircleAvatar(
-              radius: 77,
-              backgroundColor: Colors.green,
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/logo.png',
-                  width: 150,
-                  fit: BoxFit.contain,
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.blue,  // Blue border color
+                  width: 2,            // Border width
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 77,
+                backgroundColor: Colors.white,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    width: 150,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -82,7 +91,7 @@ class HostSettingsScreen extends StatelessWidget {
                 onChanged: (value) {
                   context.read<ThemeBloc>().add(ToggleThemeEvent());
                 },
-                activeColor: Colors.green,
+                activeColor: Colors.blue,
               ),
               isDarkMode: isDarkMode,
             ),
@@ -99,7 +108,22 @@ class HostSettingsScreen extends StatelessWidget {
               isDarkMode: isDarkMode,
             ),
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.green),
+              leading: const Icon(Icons.person, color: Colors.blue),  // Icon change here
+              title: Text(
+                "Switch to User",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                    fontFamily: 'Exo2'
+                ),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.blue),
               title: Text(
                 "Logout",
                 style: TextStyle(
@@ -108,7 +132,7 @@ class HostSettingsScreen extends StatelessWidget {
                     fontFamily: 'Exo2'
                 ),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/login');
               },
@@ -127,7 +151,7 @@ class HostSettingsScreen extends StatelessWidget {
     Widget? trailing,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.green),
+      leading: Icon(icon, color: Colors.blue),
       title: Text(
         title,
         style: TextStyle(
@@ -140,7 +164,7 @@ class HostSettingsScreen extends StatelessWidget {
         subtitle,
         style: const TextStyle(color: Colors.grey, fontFamily: 'Exo2',),
       ),
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.blue),
       onTap: () {},
     );
   }

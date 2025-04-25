@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 import 'checkout_screen.dart'; // Import CheckoutScreen
 
 class ArenaBookingScreen extends StatefulWidget {
@@ -45,7 +45,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: Colors.blue),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -55,7 +55,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
         title: Text(
           'Book ${widget.arena['name']}',
-          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode? Colors.white:Colors.black),
+          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue),
         ),
       ),
       body: SingleChildScrollView(
@@ -159,7 +159,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 isDarkMode: isDarkMode,
                 title: 'Additional Preferences',
                 child: CheckboxListTile(
-                  activeColor: Colors.green,
+                  activeColor: Colors.blue,
                   title: Text('Send request for teammates', style: TextStyle(fontFamily: 'Exo2',color: isDarkMode?Colors.white:Colors.black)),
                   value: _sendTeammateRequest,
                   onChanged: (value) {
@@ -235,7 +235,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         Row(
           children: [
             Text(value ? activeText : inactiveText, style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white:Colors.black)),
-            Switch(value: value, onChanged: onChanged, activeColor: Colors.green,),
+            Switch(value: value, onChanged: onChanged, activeColor: Colors.blue,),
           ],
         ),
       ],
@@ -251,7 +251,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color: Colors.green ,),
+        prefixIcon: Icon(icon, color: Colors.blue,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -274,7 +274,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color: Colors.green,),
+        prefixIcon: Icon(icon, color: Colors.blue,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
@@ -292,7 +292,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       decoration: InputDecoration(
         labelText: 'Select Date',
         labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(Icons.calendar_today, color: Colors.green,),
+        prefixIcon: Icon(Icons.calendar_today, color: Colors.blue,),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onTap: () async {

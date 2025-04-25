@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final Map<String, dynamic> bookingDetails;
@@ -42,12 +42,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         forceMaterialTransparency: true,
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: Colors.blue),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text('Checkout',  style: TextStyle(fontFamily: 'Exo2', fontSize: 20, fontWeight: FontWeight.bold, color: isDarkMode? Colors.white:Colors.black),),
+        title: Text('Checkout',  style: TextStyle(fontFamily: 'Exo2', fontSize: 20, fontWeight: FontWeight.bold, color:Colors.blue),),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -63,12 +63,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Column(
                   children: _paymentMethods.map((method) {
                     return RadioListTile<String>(
-                      activeColor: Colors.green,
+                      activeColor: Colors.blue,
                       title: Row(
                         children: [
-                          Icon(method['icon'], size: 28, color: Colors.green), // Placeholder icons
+                          Icon(method['icon'], size: 28, color: Colors.blue), // Placeholder icons
                           const SizedBox(width: 10),
-                          Text(method['name'], style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black)),
+                          Text(method['name'], style: TextStyle(fontSize: 16, color: Colors.blue)),
                         ],
                       ),
                       value: method['name'],
@@ -157,7 +157,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
             const Divider(),
             child,
           ],
@@ -194,8 +194,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-          Text(value, style: const TextStyle(color: Colors.green),),
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+          Text(value, style: const TextStyle(color: Colors.blue),),
         ],
       ),
     );

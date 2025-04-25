@@ -44,7 +44,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Colors.blue,
                           fontFamily: 'Exo2'
                         ),
                       ),
@@ -114,7 +114,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.green,
+                color: Colors.blue,
                 fontFamily: 'Exo2'
               ),
             ),
@@ -136,7 +136,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 Navigator.pushNamed(context, '/login');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -168,7 +168,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: _currentPage == index ? Colors.green : Colors.grey,
+              color: _currentPage == index ? Colors.blue : Colors.grey,
               borderRadius: BorderRadius.circular(5),
             ),
           );

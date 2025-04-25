@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 import 'arena_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -160,9 +160,9 @@ class HomeScreenState extends State<HomeScreen> {
               },
               decoration: InputDecoration(
                 labelStyle: const TextStyle(fontFamily: 'Exo2'),
-                hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontFamily: 'Exo2'),
+                hintStyle: TextStyle(color: Colors.blue, fontFamily: 'Exo2'),
                 hintText: 'Search arenas near you',
-                prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white : Colors.black),
+                prefixIcon: Icon(Icons.search, color:Colors.blue),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -180,11 +180,11 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          IconButton(
-            padding: EdgeInsets.only(right: 16),
-            icon: Icon(Icons.filter_list, color: isDarkMode ? Colors.white : Colors.black),
-            onPressed: _showFilterOptions,
-          ),
+          // IconButton(
+          //   padding: EdgeInsets.only(right: 16),
+          //   icon: Icon(Icons.filter_list, color:Colors.blue),
+          //   onPressed: _showFilterOptions,
+          // ),
         ],
       ),
       body: SingleChildScrollView(
@@ -215,7 +215,7 @@ class HomeScreenState extends State<HomeScreen> {
                         height: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: selectedSport == sport ? Colors.green : Colors.grey),
+                          border: Border.all(color: selectedSport == sport ? Colors.blue : Colors.grey),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -224,13 +224,13 @@ class HomeScreenState extends State<HomeScreen> {
                               'assets/$sport.png',
                               width: 50,
                               height: 50,
-                              color: selectedSport == sport ? Colors.green : Colors.grey,
+                              color: selectedSport == sport ? Colors.blue : Colors.grey,
                             ),
                             const SizedBox(height: 20),
                             Text(
                               sport,
                               style: TextStyle(
-                                color: selectedSport == sport ? Colors.green : Colors.grey,
+                                color: selectedSport == sport ? Colors.blue: Colors.grey,
                                 fontFamily: 'Exo2',
                               ),
                             ),

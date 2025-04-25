@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class BookingsScreen extends StatefulWidget {
   @override
@@ -86,15 +86,15 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
           style: TextStyle(
             fontFamily: 'Exo2',
             fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.black,
+            color: Colors.blue,
           ),
         ),
         centerTitle: true,
         forceMaterialTransparency: true,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.green,
-          labelColor: Colors.green,
+          indicatorColor: Colors.blue,
+          labelColor: Colors.blue,
           unselectedLabelColor: isDarkMode ? Colors.white70 : Colors.black45,
           labelStyle: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold),
           tabs: const [
@@ -120,7 +120,7 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
           "No bookings found",
           style: TextStyle(
             fontSize: 16,
-            color: isDarkMode ? Colors.white70 : Colors.black54,
+            color: Colors.blue,
             fontFamily: 'Exo2',
           ),
         ),
@@ -145,7 +145,7 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
       child: ExpansionTile(
         title: Text(
           booking['arenaName'],
-          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
+          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue),
         ),
         subtitle: Text(
           "${booking['sport']} - ${booking['date'].toLocal().toString().split(' ')[0]} at ${booking['slot']}",
@@ -153,19 +153,19 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
         ),
         children: [
           ListTile(
-            title: Text("Team Size", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            title: Text("Team Size", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue)),
             subtitle: Text("${booking['teamSize']} players", style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Court Type", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            title: Text("Court Type", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue)),
             subtitle: Text(booking['isHalfCourt'] ? "Half Court" : "Full Court", style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Payment Method", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            title: Text("Payment Method", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue)),
             subtitle: Text(booking['paymentMethod'], style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Amount Paid", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            title: Text("Amount Paid", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: Colors.blue)),
             subtitle: Text(booking['amountPaid'], style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           if (isUpcoming)

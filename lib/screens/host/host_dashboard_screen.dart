@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'host_calendar_screen.dart';
+
 class HostDashboardScreen extends StatelessWidget {
   const HostDashboardScreen({super.key});
 
@@ -40,7 +42,7 @@ class HostDashboardScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const CalendarViewScreen(),
+                      builder: (context) => const HostCalendarScreen(),
                     ),
                   );
                 },

@@ -42,7 +42,7 @@ class HostListingsScreenState extends State<HostListingsScreen> {
       'tag': 'Cricket'
     },
   ];
-
+  String? selectedSport;
   List<String> selectedSports = []; // ✅ Holds selected filters
 
   // ✅ Get filtered list of arenas
@@ -82,14 +82,50 @@ class HostListingsScreenState extends State<HostListingsScreen> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _filterButton('Cricket', Icons.sports_cricket),
-                  const SizedBox(width: 10,),
-                  _filterButton('Football', Icons.sports_soccer),
-                  const SizedBox(width: 10,),
-                  _filterButton('Tennis', Icons.sports_tennis),
-                ],
+                children: ['Cricket', 'Football', 'Tennis'].map((sport) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        // If the selected sport is tapped again, show all arenas
+                        if (selectedSport == sport) {
+                          selectedSport = null;
+                        } else {
+                          selectedSport = sport;
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: selectedSport == sport ? Colors.blue : Colors.grey),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/$sport.png',
+                              width: 50,
+                              height: 50,
+                              color: selectedSport == sport ? Colors.blue : Colors.grey,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              sport,
+                              style: TextStyle(
+                                color: selectedSport == sport ? Colors.blue: Colors.grey,
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -227,7 +263,6 @@ class HostListingsScreenState extends State<HostListingsScreen> {
                               children: [
                                 // Edit Button
                                 ElevatedButton(
-                                  
                                   onPressed: () {
                                     Navigator.push(
                                       context,
@@ -275,7 +310,7 @@ class HostListingsScreenState extends State<HostListingsScreen> {
             MaterialPageRoute(builder: (context) => const AddArenaScreen()),
           );
         },
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

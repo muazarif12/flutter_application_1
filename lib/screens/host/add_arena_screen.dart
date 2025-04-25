@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class AddArenaScreen extends StatefulWidget {
   const AddArenaScreen({super.key});
@@ -200,7 +200,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return Column(
       children: [
         SwitchListTile(
-          title: const Text("Set Same Timing for Selected Days"),
+          title: const Text("Set Same Timing for Selected Days", style: TextStyle(color: Colors.blue),),
+          activeColor: Colors.blue,
           value: _sameTimingEnabled,
           onChanged: (value) {
             setState(() {
@@ -212,7 +213,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
         if (_sameTimingEnabled) ...[
           Row(
             children: [
-              const Text("Opening: "),
+              const Text("Opening: ", style: TextStyle(color: Colors.blue),),
               IconButton(
                 icon: const Icon(Icons.access_time, color: Colors.blue),
                 onPressed: () => _pickTime(context, null, true),
@@ -222,7 +223,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
           ),
           Row(
             children: [
-              const Text("Closing: "),
+              const Text("Closing: ", style: TextStyle(color: Colors.blue),),
               IconButton(
                 icon: const Icon(Icons.access_time, color: Colors.red),
                 onPressed: () => _pickTime(context, null, false),
@@ -243,6 +244,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
               title: Row(
                 children: [
                   Checkbox(
+                    activeColor: Colors.blue,
                     value: _selectedDays[day],
                     onChanged: (value) {
                       setState(() {
@@ -255,7 +257,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                       });
                     },
                   ),
-                  Text(day),
+                  Text(day, style: TextStyle(color: Colors.blue),),
                 ],
               ),
               children: [
@@ -305,11 +307,13 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         forceMaterialTransparency: true,
-        title: const Text("Add New Arena"),
+        title: const Text("Add New Arena", style: TextStyle(color: Colors.blue),),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,color: Colors.blue),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -356,7 +360,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 title: 'Pricing & Fees',
                 child: Column(
                   children: [
-                    _buildPricingInput(), // ✅ Corrected function
+                    _buildPricingInput(),
+                    const SizedBox(height: 20,),// ✅ Corrected function
                     _buildTextField(additionalFeeController,
                         "Additional Services Fee (if any)"),
                   ],
@@ -406,7 +411,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black)),
+                    color: Colors.blue)),
             const Divider(),
             child,
           ],
@@ -422,7 +427,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       child: TextFormField(
         controller: controller,
         decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+            InputDecoration(labelText: label, border: OutlineInputBorder(), labelStyle: TextStyle(color: Colors.blue)),
         validator: (value) => value!.isEmpty ? "Required field" : null,
       ),
     );
@@ -434,7 +439,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
         decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+            InputDecoration(labelText: label, border: OutlineInputBorder(), labelStyle: TextStyle(color: Colors.blue)),
         items: items
             .map((item) => DropdownMenuItem(value: item, child: Text(item)))
             .toList(),
@@ -463,8 +468,11 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Base Pricing (Per Hour)",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        Center(
+          child: const Text("Base Pricing (Per Hour)",
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+        ),
+        const SizedBox(height: 20,),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -554,7 +562,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...options.map((option) => CheckboxListTile(
-              title: Text(option),
+          activeColor: Colors.blue,
+              title: Text(option, style: TextStyle(color: Colors.blue),),
               value: selections[option] ?? false, // ✅ Default to `false`
               onChanged: (value) {
                 setState(() => selections[option] = value ?? false);
