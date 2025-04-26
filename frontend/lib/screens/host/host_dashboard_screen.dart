@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'host_calendar_screen.dart';
+
 class HostDashboardScreen extends StatelessWidget {
   const HostDashboardScreen({super.key});
 
@@ -20,41 +22,49 @@ class HostDashboardScreen extends StatelessWidget {
           children: [
             _buildSectionTitle("Currently Booked Slots"),
             _buildBookingList([
-              {'time': '10:00 AM - 12:00 PM', 'sport': 'Football', 'customer': 'John Doe'},
-              {'time': '2:00 PM - 4:00 PM', 'sport': 'Tennis', 'customer': 'Jane Smith'},
+              {
+                'time': '10:00 AM - 12:00 PM',
+                'sport': 'Football',
+                'customer': 'John Doe'
+              },
+              {
+                'time': '2:00 PM - 4:00 PM',
+                'sport': 'Tennis',
+                'customer': 'Jane Smith'
+              },
             ]),
-
             const SizedBox(height: 20),
-
             _buildSectionTitle("Upcoming Bookings"),
             _buildBookingList([
-              {'time': '6:00 PM - 8:00 PM', 'sport': 'Cricket', 'customer': 'Alice Johnson'},
-              {'time': '9:00 AM - 10:00 AM', 'sport': 'Basketball', 'customer': 'Bob Brown'},
+              {
+                'time': '6:00 PM - 8:00 PM',
+                'sport': 'Cricket',
+                'customer': 'Alice Johnson'
+              },
+              {
+                'time': '9:00 AM - 10:00 AM',
+                'sport': 'Basketball',
+                'customer': 'Bob Brown'
+              },
             ]),
-
             const SizedBox(height: 20),
-
             Center(
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const CalendarViewScreen(),
+                      builder: (context) => const HostCalendarScreen(),
                     ),
                   );
                 },
                 child: const Text("Go to Calendar View"),
               ),
             ),
-
             const SizedBox(height: 20),
-
             _buildSectionTitle("Reminders"),
             _buildMessageReminder("You have 2 unread messages from customers."),
-
             const SizedBox(height: 20),
-
             _buildSectionTitle("Support"),
             _buildContactSupportButton(context),
           ],
@@ -82,7 +92,8 @@ class HostDashboardScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
-            title: Text(booking['time']!, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(booking['time']!,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text("${booking['sport']} - ${booking['customer']}"),
             trailing: const Icon(Icons.calendar_today, color: Colors.blue),
           ),

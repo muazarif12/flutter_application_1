@@ -43,6 +43,10 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   bool _dailyPromo = false;
   final Map<String, int> _slotDurations = {};
   final Map<String, List<String>> _generatedSlots = {};
+  final Map<String, bool> _selectedDays = {}; // New: To track selected days
+  bool _sameTimingEnabled = false;
+  TimeOfDay? _globalOpeningTime;
+  TimeOfDay? _globalClosingTime;
 
   final List<String> _days = [
     'Monday',
@@ -73,11 +77,12 @@ class AddArenaScreenState extends State<AddArenaScreen> {
   void initState() {
     super.initState();
     for (var day in _days) {
-      _openingTimes.putIfAbsent(day, () => null);
-      _closingTimes.putIfAbsent(day, () => null);
+      _selectedDays[day] = false; // ✅ Ensures all days are initialized
+      _openingTimes[day] = null;
+      _closingTimes[day] = null;
+      _generatedSlots[day] = [];
       _slotDurations.putIfAbsent(day, () => 60);
       _slotDurationValues.putIfAbsent(day, () => 60.0);
-      _generatedSlots.putIfAbsent(day, () => []); // ✅ Ensure it's always a list
     }
   }
 
@@ -93,9 +98,8 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     }
   }
 
-  // Time Picker Function
   Future<void> _pickTime(
-      BuildContext context, String day, bool isOpeningTime) async {
+      BuildContext context, String? day, bool isOpeningTime) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -103,25 +107,41 @@ class AddArenaScreenState extends State<AddArenaScreen> {
 
     if (picked != null) {
       setState(() {
-        if (isOpeningTime) {
-          _openingTimes[day] = picked;
+        if (day == null) {
+          // Global timing case
+          if (isOpeningTime) {
+            _globalOpeningTime = picked;
+          } else {
+            _globalClosingTime = picked;
+          }
         } else {
-          _closingTimes[day] = picked;
+          // Day-specific timing
+          if (isOpeningTime) {
+            _openingTimes[day] = picked;
+          } else {
+            _closingTimes[day] = picked;
+          }
         }
       });
 
-      _generateSlots(day);
+      if (day != null) {
+        _generateSlots(day);
+      }
     }
   }
 
   // Generate Slots Based on Opening, Closing Time & Duration
   void _generateSlots(String day) {
-    if (_openingTimes[day] == null || _closingTimes[day] == null) return;
+    if (_openingTimes[day] == null || _closingTimes[day] == null) {
+      setState(() {
+        _generatedSlots[day] = [];
+      });
+      return;
+    }
 
     TimeOfDay startTime = _openingTimes[day]!;
     TimeOfDay endTime = _closingTimes[day]!;
-    int duration =
-        (_slotDurationValues[day] ?? 60).toInt(); // Default to 60 min if null
+    int duration = 60; // Default slot duration
     List<String> slots = [];
     TimeOfDay currentTime = startTime;
 
@@ -153,120 +173,145 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period == DayPeriod.am ? "AM" : "PM"}";
   }
 
+  // Apply Same Timing to Selected Days
+  void _applySameTiming() {
+    setState(() {
+      for (var day in _days) {
+        if (_selectedDays[day] == true) {
+          if (_globalOpeningTime != null && _globalClosingTime != null) {
+            _openingTimes[day] = _globalOpeningTime;
+            _closingTimes[day] = _globalClosingTime;
+            _generateSlots(day);
+          }
+        } else {
+          _openingTimes[day] = null;
+          _closingTimes[day] = null;
+          _generatedSlots[day] = [];
+        }
+      }
+    });
+  }
+
   Widget _buildSlotConfiguration() {
     return Column(
-      children: _days.map((day) {
-        return ExpansionTile(
-          title: Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Opening Time
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Text("Opening: "),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(
-                                  color: Colors.grey), // Add border
-                            ),
-                            onPressed: () => _pickTime(context, day, true),
-                            child: Text(
-                              _openingTimes[day] != null
-                                  ? _formatTime(_openingTimes[day]!)
-                                  : "Select Time",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Space between
-                  // Closing Time
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Text("Closing: "),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              side: const BorderSide(
-                                  color: Colors.grey), // Add border
-                            ),
-                            onPressed: () => _pickTime(context, day, false),
-                            child: Text(
-                              _closingTimes[day] != null
-                                  ? _formatTime(_closingTimes[day]!)
-                                  : "Select Time",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      children: [
+        SwitchListTile(
+          title: const Text(
+            "Set Same Timing for Selected Days",
+            style: TextStyle(color: Colors.blue),
+          ),
+          activeColor: Colors.blue,
+          value: _sameTimingEnabled,
+          onChanged: (value) {
+            setState(() {
+              _sameTimingEnabled = value;
+            });
+          },
+        ),
+        if (_sameTimingEnabled) ...[
+          Row(
+            children: [
+              const Text(
+                "Opening: ",
+                style: TextStyle(color: Colors.blue),
               ),
-            ),
-            // Slot Duration Selection
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              IconButton(
+                icon: const Icon(Icons.access_time, color: Colors.blue),
+                onPressed: () => _pickTime(context, null, true),
+              ),
+              Text(_globalOpeningTime != null
+                  ? _formatTime(_globalOpeningTime!)
+                  : "Not Set"),
+            ],
+          ),
+          Row(
+            children: [
+              const Text(
+                "Closing: ",
+                style: TextStyle(color: Colors.blue),
+              ),
+              IconButton(
+                icon: const Icon(Icons.access_time, color: Colors.red),
+                onPressed: () => _pickTime(context, null, false),
+              ),
+              Text(_globalClosingTime != null
+                  ? _formatTime(_globalClosingTime!)
+                  : "Not Set"),
+            ],
+          ),
+          ElevatedButton.icon(
+            onPressed:
+                (_globalOpeningTime != null && _globalClosingTime != null)
+                    ? _applySameTiming
+                    : null,
+            icon: const Icon(Icons.check),
+            label: const Text("Apply Timing to Selected Days"),
+          ),
+        ],
+        Column(
+          children: _days.map((day) {
+            return ExpansionTile(
+              title: Row(
                 children: [
-                  const Text("Max Slot Duration",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Slider(
-                    value: _slotDurationValues[day] ??
-                        60.0, // Default value if null
-                    min: 30.0,
-                    max: 60.0,
-                    divisions: 6, // Steps of 5 minutes
-                    label:
-                        "${(_slotDurationValues[day] ?? 60).toInt()} minutes",
+                  Checkbox(
+                    activeColor: Colors.blue,
+                    value: _selectedDays[day],
                     onChanged: (value) {
                       setState(() {
-                        _slotDurationValues[day] = value;
-                        _generateSlots(day);
+                        _selectedDays[day] = value ?? false;
+                        if (!value!) {
+                          _openingTimes[day] = null;
+                          _closingTimes[day] = null;
+                          _generatedSlots[day] = [];
+                        }
                       });
                     },
                   ),
+                  Text(
+                    day,
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ],
               ),
-            ),
-            // Generated Slots List
-            if (_generatedSlots[day] != null &&
-                _generatedSlots[day]!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    const Text("Generated Slots:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    ..._generatedSlots[day]!.map((slot) => Text(slot)).toList(),
+                    const Text("Opening: "),
+                    IconButton(
+                      icon: const Icon(Icons.access_time, color: Colors.blue),
+                      onPressed: () => _pickTime(context, day, true),
+                    ),
+                    Text(_openingTimes[day] != null
+                        ? _formatTime(_openingTimes[day]!)
+                        : "Not Set"),
                   ],
                 ),
-              ),
-          ],
-        );
-      }).toList(),
+                Row(
+                  children: [
+                    const Text("Closing: "),
+                    IconButton(
+                      icon: const Icon(Icons.access_time, color: Colors.red),
+                      onPressed: () => _pickTime(context, day, false),
+                    ),
+                    Text(_closingTimes[day] != null
+                        ? _formatTime(_closingTimes[day]!)
+                        : "Not Set"),
+                  ],
+                ),
+                if (_generatedSlots[day]!.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Generated Slots:",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      ..._generatedSlots[day]!.map((slot) => Text(slot)),
+                    ],
+                  ),
+              ],
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -280,11 +325,16 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         forceMaterialTransparency: true,
-        title: const Text("Add New Arena"),
+        title: const Text(
+          "Add New Arena",
+          style: TextStyle(color: Colors.blue),
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -331,7 +381,10 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 title: 'Pricing & Fees',
                 child: Column(
                   children: [
-                    _buildPricingInput(), // ✅ Corrected function
+                    _buildPricingInput(),
+                    const SizedBox(
+                      height: 20,
+                    ), // ✅ Corrected function
                     _buildTextField(additionalFeeController,
                         "Additional Services Fee (if any)"),
                   ],
@@ -381,7 +434,7 @@ class AddArenaScreenState extends State<AddArenaScreen> {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black)),
+                    color: Colors.blue)),
             const Divider(),
             child,
           ],
@@ -396,8 +449,10 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(color: Colors.blue)),
         validator: (value) => value!.isEmpty ? "Required field" : null,
       ),
     );
@@ -408,8 +463,10 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(color: Colors.blue)),
         items: items
             .map((item) => DropdownMenuItem(value: item, child: Text(item)))
             .toList(),
@@ -438,8 +495,14 @@ class AddArenaScreenState extends State<AddArenaScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Base Pricing (Per Hour)",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        Center(
+          child: const Text("Base Pricing (Per Hour)",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -529,7 +592,11 @@ class AddArenaScreenState extends State<AddArenaScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...options.map((option) => CheckboxListTile(
-              title: Text(option),
+              activeColor: Colors.blue,
+              title: Text(
+                option,
+                style: TextStyle(color: Colors.blue),
+              ),
               value: selections[option] ?? false, // ✅ Default to `false`
               onChanged: (value) {
                 setState(() => selections[option] = value ?? false);

@@ -217,12 +217,9 @@ class HomeScreenState extends State<HomeScreen> {
               },
               decoration: InputDecoration(
                 labelStyle: const TextStyle(fontFamily: 'Exo2'),
-                hintStyle: TextStyle(
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontFamily: 'Exo2'),
+                hintStyle: TextStyle(color: Colors.blue, fontFamily: 'Exo2'),
                 hintText: 'Search arenas near you',
-                prefixIcon: Icon(Icons.search,
-                    color: isDarkMode ? Colors.white : Colors.black),
+                prefixIcon: Icon(Icons.search, color: Colors.blue),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -287,7 +284,7 @@ class HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                               color: selectedSport == sport
-                                  ? Colors.green
+                                  ? Colors.blue
                                   : Colors.grey),
                         ),
                         child: Column(
@@ -550,7 +547,7 @@ class HomeScreenState extends State<HomeScreen> {
                   min: 1,
                   max: 11,
                   divisions: 10,
-                  activeColor: Colors.green,
+                  activeColor: Colors.blue,
                   inactiveColor: Colors.grey,
                   onChanged: (value) {
                     setState(() {
@@ -602,7 +599,7 @@ class HomeScreenState extends State<HomeScreen> {
             min: 100,
             max: 1000,
             divisions: 18,
-            activeColor: Colors.green,
+            activeColor: Colors.blue,
             inactiveColor: Colors.grey,
             labels: RangeLabels(
               'Rs. ${priceRange.start.toInt()}',
@@ -627,7 +624,7 @@ class HomeScreenState extends State<HomeScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -661,7 +658,7 @@ class HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'Reset All Filters',
                 style: TextStyle(
-                  color: Colors.green,
+                  color: Colors.blue,
                   fontFamily: 'Exo2',
                 ),
               ),
@@ -791,7 +788,7 @@ class HomeScreenState extends State<HomeScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Colors.blue,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

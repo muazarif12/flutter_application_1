@@ -51,8 +51,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              color: isDarkMode ? Colors.white : Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -65,7 +64,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
           style: TextStyle(
               fontFamily: 'Exo2',
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.black),
+              color: Colors.blue),
         ),
       ),
       body: SingleChildScrollView(
@@ -172,7 +171,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 isDarkMode: isDarkMode,
                 title: 'Additional Preferences',
                 child: CheckboxListTile(
-                  activeColor: Colors.green,
+                  activeColor: Colors.blue,
                   title: Text('Send request for teammates',
                       style: TextStyle(
                           fontFamily: 'Exo2',
@@ -272,7 +271,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             Switch(
               value: value,
               onChanged: onChanged,
-              activeColor: Colors.green,
+              activeColor: Colors.blue,
             ),
           ],
         ),
@@ -294,7 +293,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           icon,
-          color: Colors.green,
+          color: Colors.blue,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -324,7 +323,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           icon,
-          color: Colors.green,
+          color: Colors.blue,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -351,7 +350,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           Icons.calendar_today,
-          color: Colors.green,
+          color: Colors.blue,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),

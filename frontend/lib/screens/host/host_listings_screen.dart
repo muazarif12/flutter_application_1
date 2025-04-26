@@ -42,7 +42,7 @@ class HostListingsScreenState extends State<HostListingsScreen> {
       'tag': 'Cricket'
     },
   ];
-
+  String? selectedSport;
   List<String> selectedSports = []; // ✅ Holds selected filters
 
   // ✅ Get filtered list of arenas
@@ -79,13 +79,61 @@ class HostListingsScreenState extends State<HostListingsScreen> {
           // ✅ Filter Buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _filterButton('Cricket', Icons.sports_cricket),
-                _filterButton('Football', Icons.sports_soccer),
-                _filterButton('Tennis', Icons.sports_tennis),
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: ['Cricket', 'Football', 'Tennis'].map((sport) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        // If the selected sport is tapped again, show all arenas
+                        if (selectedSport == sport) {
+                          selectedSport = null;
+                        } else {
+                          selectedSport = sport;
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: selectedSport == sport
+                                  ? Colors.blue
+                                  : Colors.grey),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/$sport.png',
+                              width: 50,
+                              height: 50,
+                              color: selectedSport == sport
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              sport,
+                              style: TextStyle(
+                                color: selectedSport == sport
+                                    ? Colors.blue
+                                    : Colors.grey,
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
 
@@ -214,29 +262,40 @@ class HostListingsScreenState extends State<HostListingsScreen> {
                                           ),
                                         ),
                                       ),
-                                      PopupMenuButton<String>(
-                                        onSelected: (value) {
-                                          if (value == 'edit') {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditArenaScreen(
-                                                        arena: arena),
-                                              ),
-                                            );
-                                          } else if (value == 'delete') {
-                                            _deleteArena(arena['id']);
-                                          }
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // ✅ Separate Edit and Delete Buttons
+                                  Row(
+                                    children: [
+                                      // Edit Button
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EditArenaScreen(arena: arena),
+                                            ),
+                                          );
                                         },
-                                        itemBuilder: (context) => [
-                                          const PopupMenuItem(
-                                              value: 'edit',
-                                              child: Text('Edit')),
-                                          const PopupMenuItem(
-                                              value: 'delete',
-                                              child: Text('Delete')),
-                                        ],
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        child: const Text('Edit'),
+                                      ),
+                                      // Delete Button
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            _deleteArena(arena['id']);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          child: const Text('Delete'),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -258,7 +317,7 @@ class HostListingsScreenState extends State<HostListingsScreen> {
             MaterialPageRoute(builder: (context) => const AddArenaScreen()),
           );
         },
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

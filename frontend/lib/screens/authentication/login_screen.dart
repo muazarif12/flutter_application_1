@@ -23,14 +23,23 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              CircleAvatar(
-                radius: 107,
-                backgroundColor: Colors.green,
-                child: ClipOval(
-                  child: Image.asset(
-                    width: 210,
-                    'assets/logo.jpeg',
-                    fit: BoxFit.contain,
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.blue, // Blue border color
+                    width: 2, // Border width
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 107,
+                  backgroundColor: Colors.white, // Changed from green to white
+                  child: ClipOval(
+                    child: Image.asset(
+                      width: 210,
+                      'assets/logo.jpeg',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
@@ -41,7 +50,8 @@ class LoginScreen extends StatelessWidget {
                   labelStyle: GoogleFonts.exo2(),
                   labelText: 'Email or Phone Number',
                   border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.email),
+                  prefixIcon: const Icon(Icons.email,
+                      color: Colors.blue), // Changed icon color to blue
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -52,7 +62,8 @@ class LoginScreen extends StatelessWidget {
                   labelStyle: GoogleFonts.exo2(),
                   labelText: 'Password',
                   border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.lock),
+                  prefixIcon: const Icon(Icons.lock,
+                      color: Colors.blue), // Changed icon color to blue
                 ),
                 obscureText: true,
               ),
@@ -92,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.blue, // Changed from green to blue
                 ),
                 child: Text('Login',
                     style: GoogleFonts.exo2(fontSize: 18, color: Colors.white)),

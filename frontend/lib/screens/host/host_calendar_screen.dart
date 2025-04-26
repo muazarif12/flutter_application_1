@@ -12,24 +12,54 @@ class HostCalendarScreen extends StatefulWidget {
 class HostCalendarScreenState extends State<HostCalendarScreen> {
   CalendarView _viewMode = CalendarView.month;
   int _visibleDays = 7;
-  String? _selectedArena; // For filtering slots by arena
+  String? _selectedArena;
+  Key _calendarKey = UniqueKey();
+  Set<DateTime> _countedDays = Set();
 
+  // For filtering slots by arena
   List<Map<String, dynamic>> _bookings = [
     {
       'arena': 'Arena 1',
       'customer': 'John Doe',
       'amount': 200,
       'isHalfCourt': false,
-      'date': DateTime(2025, 3, 11, 10, 0),
+      'date': DateTime(2025, 4, 23, 10, 0),
       'duration': 60,
       'isBlocked': false,
     },
     {
       'arena': 'Arena 1',
+      'customer': 'John Doe',
+      'amount': 200,
+      'isHalfCourt': false,
+      'date': DateTime(2025, 4, 22, 10, 0),
+      'duration': 60,
+      'isBlocked': false,
+    },
+    {
+      'arena': 'Arena 2',
       'customer': 'Jane Smith',
       'amount': 150,
       'isHalfCourt': true,
-      'date': DateTime(2025, 3, 11, 12, 0), // Second slot on same day
+      'date': DateTime(2025, 4, 22, 12, 22), // Second slot on same day
+      'duration': 60,
+      'isBlocked': false,
+    },
+    {
+      'arena': 'Arena 2',
+      'customer': 'Smith',
+      'amount': 150,
+      'isHalfCourt': true,
+      'date': DateTime(2025, 4, 22, 12, 22), // Second slot on same day
+      'duration': 60,
+      'isBlocked': false,
+    },
+    {
+      'arena': 'Arena 2',
+      'customer': 'Alex',
+      'amount': 300,
+      'isHalfCourt': false,
+      'date': DateTime(2025, 3, 24, 18, 25),
       'duration': 60,
       'isBlocked': false,
     },
@@ -38,7 +68,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
       'customer': 'Alice Johnson',
       'amount': 300,
       'isHalfCourt': false,
-      'date': DateTime(2025, 3, 12, 18, 0),
+      'date': DateTime(2025, 3, 24, 18, 0),
       'duration': 60,
       'isBlocked': false,
     },
@@ -48,8 +78,8 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Host Calendar"),
-        centerTitle: true,
+        automaticallyImplyLeading: false,
+        forceMaterialTransparency: true,
         actions: [
           // Dropdown for selecting different arenas
           Padding(
@@ -64,11 +94,12 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                     .toSet()
                     .map((arena) {
                   return DropdownMenuItem(value: arena, child: Text(arena));
-                }).toList(),
+                }),
               ],
               onChanged: (value) {
                 setState(() {
                   _selectedArena = value;
+                  _calendarKey = UniqueKey(); // Force Calendar Refresh
                 });
               },
             ),
@@ -76,7 +107,13 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
           PopupMenuButton<String>(
             onSelected: (String value) {
               setState(() {
-                if (value == "3-day") {
+                if (value == "Month") {
+                  _viewMode = CalendarView.month;
+                  _visibleDays = 7; // Reset custom views
+                } else if (value == "Day") {
+                  _viewMode = CalendarView.day;
+                  _visibleDays = 1;
+                } else if (value == "3-day") {
                   _viewMode = CalendarView.week;
                   _visibleDays = 3;
                 } else if (value == "5-day") {
@@ -85,12 +122,8 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                 } else if (value == "Week") {
                   _viewMode = CalendarView.week;
                   _visibleDays = 7;
-                } else if (value == "Day") {
-                  _viewMode = CalendarView.day;
-                  _visibleDays = 1;
-                } else {
-                  _viewMode = CalendarView.month;
                 }
+                _calendarKey = UniqueKey();
               });
             },
             icon: Icon(Icons.more_vert, color: Colors.green[900]),
@@ -105,22 +138,77 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
         ],
       ),
       body: SfCalendar(
+        key: _calendarKey,
         firstDayOfWeek: 1,
         monthViewSettings: const MonthViewSettings(
           showTrailingAndLeadingDates: false,
           appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
         ),
         view: _viewMode,
-        allowedViews: const [
-          CalendarView.day,
-          CalendarView.week,
-          CalendarView.month
-        ],
         dataSource: BookingDataSource(_getCalendarAppointments()),
+        appointmentBuilder: (context, calendarAppointmentDetails) {
+          if (_viewMode == CalendarView.month) {
+            // Month view indicator logic (unchanged)
+            DateTime appointmentDate =
+                calendarAppointmentDetails.appointments.first.startTime;
+            int appointmentCount = _countAppointmentsForDay(appointmentDate);
+            return Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black,
+              ),
+            );
+          } else {
+            // For Week/Day/Timeline views
+            final Appointment appointment =
+                calendarAppointmentDetails.appointments.first;
+            final bool isHalfCourt = appointment.subject.contains("(1/2)");
+
+            // Check if there are overlapping half-court bookings
+            final List<Appointment> overlappingAppointments =
+                _getOverlappingAppointments(appointment);
+
+            if (isHalfCourt && overlappingAppointments.length >= 2) {
+              // Two half-court bookings at the same time → split the cell
+              return Row(
+                children: [
+                  Expanded(
+                    child: _buildHalfCourtAppointment(
+                        overlappingAppointments[0],
+                        isLeft: true),
+                  ),
+                  Expanded(
+                    child: _buildHalfCourtAppointment(
+                        overlappingAppointments[1],
+                        isLeft: false),
+                  ),
+                ],
+              );
+            } else if (isHalfCourt) {
+              // Single half-court booking → show on the left
+              return _buildHalfCourtAppointment(appointment, isLeft: true);
+            } else {
+              // Full-court booking → take full width
+              return Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: appointment.color,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  appointment.subject,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              );
+            }
+          }
+        },
         timeSlotViewSettings: TimeSlotViewSettings(
           numberOfDaysInView: _visibleDays,
           startHour: 8,
-          endHour: 22,
+          endHour: 24,
         ),
         headerStyle: const CalendarHeaderStyle(
           textAlign: TextAlign.start,
@@ -145,22 +233,64 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
     );
   }
 
+  // Get overlapping appointments (for the same time slot)
+  List<Appointment> _getOverlappingAppointments(Appointment appointment) {
+    return _getCalendarAppointments().where((a) {
+      return a.startTime == appointment.startTime &&
+          a.endTime == appointment.endTime &&
+          a.subject.contains("(1/2)");
+    }).toList();
+  }
+
+// Build a half-width appointment widget
+  Widget _buildHalfCourtAppointment(Appointment appointment,
+      {required bool isLeft}) {
+    return Container(
+      margin: EdgeInsets.only(right: isLeft ? 2 : 0, left: isLeft ? 0 : 2),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: appointment.color,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        appointment.subject,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  // Count appointments for a specific day
+  int _countAppointmentsForDay(DateTime date) {
+    // Count appointments for the given date
+    return _bookings.where((booking) {
+      return booking['date'].year == date.year &&
+          booking['date'].month == date.month &&
+          booking['date'].day == date.day;
+    }).length; // Return the number of appointments for that day
+  }
+
   // Convert bookings to calendar appointments
   List<Appointment> _getCalendarAppointments() {
-    return _bookings.map((booking) {
+    List<Map<String, dynamic>> filteredBookings = _selectedArena == null
+        ? _bookings // Show all bookings if no filter
+        : _bookings.where((b) => b['arena'] == _selectedArena).toList();
+
+    return filteredBookings.map((booking) {
+      DateTime slotTime = booking['date'];
       return Appointment(
-        startTime: booking['date'],
-        endTime: booking['date'].add(Duration(minutes: booking['duration'])),
-        subject: booking['arena'], // Now stores the arena name
+        startTime: slotTime,
+        endTime: slotTime.add(Duration(minutes: booking['duration'])),
+        subject: booking['isHalfCourt']
+            ? "${booking['arena']} (1/2)"
+            : booking['arena'],
         color: booking['isBlocked']
             ? Colors.red
             : (booking['isHalfCourt'] ? Colors.blue : Colors.orange),
-        notes: "${booking['customer']} - \$${booking['amount']}",
       );
     }).toList();
   }
 
-  // Show slot selection if multiple exist
   void _showSlotSelection(List<Appointment> slots) {
     showModalBottomSheet(
       context: context,
@@ -187,7 +317,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                   itemBuilder: (context, index) {
                     final slot = slots[index];
                     return ListTile(
-                      title: Text("${slot.subject}"),
+                      title: Text(slot.subject),
                       subtitle: Text(
                           "${_formatDate(slot.startTime)} | ${_formatTime(slot.startTime)} - ${_formatTime(slot.endTime)}"),
                       trailing: const Icon(Icons.edit, color: Colors.green),
@@ -206,9 +336,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
     );
   }
 
-  // Edit a slot
   void _editSlot(Appointment appointment) {
-    // Find the correct booking using BOTH start time and arena
     Map<String, dynamic>? slot = _bookings.firstWhere(
       (b) =>
           b['date'] == appointment.startTime &&
@@ -216,14 +344,13 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
       orElse: () => {},
     );
 
-    // Ensure slot is not empty before opening modal
     if (slot.isEmpty) return;
 
     double slotDuration = (slot['duration'] as int).toDouble();
     bool isHalfCourt = slot['isHalfCourt'];
     bool isBlocked = slot['isBlocked'];
     double slotCost = (slot['amount'] as num).toDouble();
-    String arenaName = slot['arena']; // Get arena name
+    String arenaName = slot['arena'];
 
     showModalBottomSheet(
       context: context,
@@ -237,7 +364,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
             builder: (context, setState) {
               return Container(
                 padding: const EdgeInsets.all(20),
-                height: 500,
+                height: 550,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -252,8 +379,6 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-
-                    // Display Arena Name
                     Center(
                       child: Text(
                         "$arenaName - ${_formatDate(slot['date'])}",
@@ -261,27 +386,39 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
-                    // Slot Duration (Read-Only)
-                    Text("Slot Duration (Cannot be Increased)",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("Slot Duration",
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "${slotDuration.toInt()} min",
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                     Slider(
                       value: slotDuration,
-                      min: 30.0, // Set minimum allowed duration
-                      max: 120.0, // Increase max limit if required
-                      divisions:
-                          18, // Allows 5-minute increments (from 30 to 120 min)
-                      label: "${slotDuration.toInt()} min",
+                      min: 30.0, // Minimum duration
+                      max: 60.0, // Maximum duration
+                      divisions: 6, // Allows 5-minute increments
                       onChanged: (value) {
                         setState(() {
                           slotDuration = value; // Update slot duration
                         });
                       },
                     ),
-
-                    // Half Court Toggle
+                    const SizedBox(height: 10),
                     SwitchListTile(
                       title: const Text("Half Court Booking"),
                       value: isHalfCourt,
@@ -291,7 +428,6 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                         });
                       },
                     ),
-
                     if (isHalfCourt)
                       Container(
                         padding: const EdgeInsets.all(8),
@@ -301,32 +437,30 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                         child: const Text(
                             "Half of this slot is still available for booking."),
                       ),
-
-                    // Block Slot Toggle
-                    SwitchListTile(
-                      title: const Text("Block Slot (Maintenance, etc.)"),
-                      value: isBlocked,
-                      onChanged: (value) {
-                        setState(() {
-                          isBlocked = value;
-                        });
-                      },
-                    ),
-
-                    // Slot Cost Input
+                    const SizedBox(height: 10),
                     Text("Slot Cost",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(LucideIcons.dollarSign, color: Colors.green),
-                        const SizedBox(width: 8),
-                        Expanded(
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle,
+                              color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              if (slotCost > 0) slotCost -= 5;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          width: 80,
                           child: TextField(
                             keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: "Enter slot cost",
-                            ),
+                                border: OutlineInputBorder()),
+                            controller: TextEditingController(
+                                text: slotCost.toString()),
                             onChanged: (value) {
                               setState(() {
                                 slotCost = double.tryParse(value) ?? slotCost;
@@ -334,12 +468,50 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
                             },
                           ),
                         ),
+                        IconButton(
+                          icon:
+                              const Icon(Icons.add_circle, color: Colors.green),
+                          onPressed: () {
+                            setState(() {
+                              slotCost += 5;
+                            });
+                          },
+                        ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-
-                    // Save & Close Buttons
+                    Text("Block Slot",
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isBlocked = false;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isBlocked ? Colors.grey : Colors.green,
+                          ),
+                          child: const Text("Available"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isBlocked = true;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isBlocked ? Colors.red : Colors.grey,
+                          ),
+                          child: const Text("Blocked"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -375,17 +547,15 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
     );
   }
 
-// Update Slot Data in Calendar
   void _updateSlot(Map<String, dynamic> slot, double duration, bool halfCourt,
       bool blocked, double cost) {
     setState(() {
-      slot['duration'] = duration.toInt(); // ✅ Save edited duration
+      slot['duration'] = duration.toInt();
       slot['isHalfCourt'] = halfCourt;
       slot['isBlocked'] = blocked;
       slot['amount'] = cost;
     });
 
-    // Refresh the calendar after updating the slot
     setState(() {});
   }
 
@@ -398,7 +568,6 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
   }
 }
 
-// Custom Data Source for Syncfusion Calendar
 class BookingDataSource extends CalendarDataSource {
   BookingDataSource(List<Appointment> source) {
     appointments = source;

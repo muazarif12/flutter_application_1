@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import 'host_listings_screen.dart';
@@ -55,7 +54,7 @@ class HostMainScreenState extends State<HostMainScreen> {
           selectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
           unselectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          selectedItemColor: Colors.green,
+          selectedItemColor: Colors.blue,
           unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,

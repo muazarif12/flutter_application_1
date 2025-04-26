@@ -20,8 +20,7 @@ class ArenaDetailsScreen extends StatelessWidget {
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              color: isDarkMode ? Colors.white : Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -35,19 +34,17 @@ class ArenaDetailsScreen extends StatelessWidget {
               fontFamily: 'Exo2',
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.black),
+              color: Colors.blue),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.share,
-                color: isDarkMode ? Colors.white : Colors.black),
+            icon: Icon(Icons.share, color: Colors.blue),
             onPressed: () {
               _shareArena(context);
             },
           ),
           IconButton(
-            icon: Icon(Icons.favorite_border,
-                color: isDarkMode ? Colors.white : Colors.black),
+            icon: Icon(Icons.favorite_border, color: Colors.blue),
             onPressed: () {
               _addToFavorites(context);
             },
@@ -131,10 +128,10 @@ class ArenaDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: () => _openGoogleMaps(arena['location']),
-                    icon: Icon(Icons.map, color: Colors.green[900]),
+                    icon: Icon(Icons.map, color: Colors.blue),
                     label: Text(
                       "Open in Maps",
-                      style: TextStyle(color: Colors.green[900]),
+                      style: TextStyle(color: Colors.blue),
                     ),
                   ),
                 ],
@@ -149,20 +146,20 @@ class ArenaDetailsScreen extends StatelessWidget {
               title: 'Description',
               child: Text(
                   'This is a great place for sports lovers. The owner is John Doe.',
-                  style: TextStyle(color: Colors.green)),
+                  style: TextStyle(color: Colors.blue)),
             ),
             _card(
               isDarkMode: isDarkMode,
               title: 'Timings & Pricing',
               child: Text(
                   'Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000',
-                  style: TextStyle(color: Colors.green)),
+                  style: TextStyle(color: Colors.blue)),
             ),
             _card(
               isDarkMode: isDarkMode,
               title: 'Pricing Details',
               child: Text('Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr',
-                  style: TextStyle(color: Colors.green)),
+                  style: TextStyle(color: Colors.blue)),
             ),
 
             const SizedBox(height: 16),
@@ -173,11 +170,27 @@ class ArenaDetailsScreen extends StatelessWidget {
               title: 'Facilities',
               child: Wrap(
                 spacing: 8,
-                children: const [
-                  Chip(label: Text('Cafeteria')),
-                  Chip(label: Text('Showers')),
-                  Chip(label: Text('Parking')),
-                  Chip(label: Text('Wi-Fi')),
+                children: [
+                  Chip(
+                      label: Text(
+                    'Cafeteria',
+                    style: TextStyle(color: Colors.blue),
+                  )),
+                  Chip(
+                      label: Text(
+                    'Showers',
+                    style: TextStyle(color: Colors.blue),
+                  )),
+                  Chip(
+                      label: Text(
+                    'Parking',
+                    style: TextStyle(color: Colors.blue),
+                  )),
+                  Chip(
+                      label: Text(
+                    'Wi-Fi',
+                    style: TextStyle(color: Colors.blue),
+                  )),
                 ],
               ),
             ),
@@ -206,7 +219,7 @@ class ArenaDetailsScreen extends StatelessWidget {
               title: 'Cancellation Policy',
               child: Text(
                   'Cancellations must be made 24 hours before the booking time.',
-                  style: TextStyle(color: Colors.green)),
+                  style: TextStyle(color: Colors.blue)),
             ),
 
             const SizedBox(height: 16),
@@ -216,14 +229,14 @@ class ArenaDetailsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: Icon(Icons.calendar_today, color: Colors.green[900]),
+                icon: Icon(Icons.calendar_today, color: Colors.blue[900]),
                 label: Text(
                   'Book Now',
                   style: TextStyle(
                       fontFamily: 'Exo2',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green[900]),
+                      color: Colors.blue[900]),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -247,14 +260,14 @@ class ArenaDetailsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: Icon(Icons.support_agent, color: Colors.green[900]),
+                icon: Icon(Icons.support_agent, color: Colors.blue[900]),
                 label: Text(
                   'Talk to Support',
                   style: TextStyle(
                       fontFamily: 'Exo2',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green[900]),
+                      color: Colors.blue[900]),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -302,8 +315,10 @@ class ArenaDetailsScreen extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Exo2',
-                    color: isDarkMode ? Colors.white : Colors.black)),
-            const Divider(),
+                    color: Colors.blue)),
+            const Divider(
+              color: Colors.blue,
+            ),
             child,
           ],
         ),
@@ -315,7 +330,7 @@ class ArenaDetailsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Text('$user: "$review"',
-          style: const TextStyle(fontSize: 14, color: Colors.green)),
+          style: const TextStyle(fontSize: 14, color: Colors.blue)),
     );
   }
 
