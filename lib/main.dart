@@ -14,6 +14,13 @@ import 'screens/settings/settings.dart';
 import 'screens/host/host_main_screen.dart';
 import 'screens/host/add_arena_screen.dart';
 import 'screens/host/edit_arena_screen.dart';
+
+final Color electricBlue = Color(0xFF007BFF);  // Primary Blue
+final Color vividOrange = Color(0xFFFF5A1F);   // Secondary Orange
+final Color limeGreen = Color(0xFF32CD32);     // Accent Green
+final Color lightGray = Color(0xFFF5F5F5);     // Background Gray
+final Color slateGray = Color(0xFF4B5563);     // Neutral Slate Gray
+
 void main() {
   final themeBloc = ThemeBloc();
   themeBloc.setSystemUI();
@@ -37,6 +44,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Arena Finder',
           theme: ThemeData(
+              primaryColor: electricBlue, // Primary color for the app// Background color
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
             useMaterial3: true,
             fontFamily: 'Exo2'
