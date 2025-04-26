@@ -43,3 +43,31 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Add these Android-specific entries to your .gitignore
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.*
+**/android/key.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# Android Studio build artifacts
+android/gradle.properties
+android/**/build/
+android/**/*.json
+android/**/*.bin
+android/**/*.txt
+android/**/output-metadata.json
+android_gradle_build*.json
+android_gradle_build_mini.json
+configure_*.bin
+metadata_generation_command.txt
+prefab_config.json
+index-*.json
+*.bat
