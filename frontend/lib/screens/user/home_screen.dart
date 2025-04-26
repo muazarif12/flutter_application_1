@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 import 'arena_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int) onTabTapped;
   final int currentIndex;
 
-  const HomeScreen({super.key, required this.onTabTapped, required this.currentIndex});
+  const HomeScreen(
+      {super.key, required this.onTabTapped, required this.currentIndex});
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -61,8 +62,10 @@ class HomeScreenState extends State<HomeScreen> {
 
   String? selectedSport;
   bool sortAscending = true;
-  TextEditingController searchController = TextEditingController(); // ✅ Search Controller
-  String searchQuery = ""; // Flag to track sorting order (ascending or descending)
+  TextEditingController searchController =
+      TextEditingController(); // ✅ Search Controller
+  String searchQuery =
+      ""; // Flag to track sorting order (ascending or descending)
 
   @override
   void initState() {
@@ -110,7 +113,8 @@ class HomeScreenState extends State<HomeScreen> {
       permission = await Geolocator.requestPermission();
     }
 
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
       _getCurrentLocation(); // ✅ Get user's location
     }
   }
@@ -122,7 +126,8 @@ class HomeScreenState extends State<HomeScreen> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      print("User Location: Lat:${position.latitude}, Long:${position.longitude}");
+      print(
+          "User Location: Lat:${position.latitude}, Long:${position.longitude}");
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -149,7 +154,8 @@ class HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           Container(
-            padding: const EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 16),
+            padding:
+                const EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 16),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
               controller: searchController, // ✅ Connect Controller
@@ -160,29 +166,34 @@ class HomeScreenState extends State<HomeScreen> {
               },
               decoration: InputDecoration(
                 labelStyle: const TextStyle(fontFamily: 'Exo2'),
-                hintStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontFamily: 'Exo2'),
+                hintStyle: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                    fontFamily: 'Exo2'),
                 hintText: 'Search arenas near you',
-                prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white : Colors.black),
+                prefixIcon: Icon(Icons.search,
+                    color: isDarkMode ? Colors.white : Colors.black),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
-                  icon: Icon(Icons.clear, color: isDarkMode ? Colors.white : Colors.black),
-                  onPressed: () {
-                    setState(() {
-                      searchController.clear();
-                      searchQuery = "";
-                    });
-                  },
-                )
+                        icon: Icon(Icons.clear,
+                            color: isDarkMode ? Colors.white : Colors.black),
+                        onPressed: () {
+                          setState(() {
+                            searchController.clear();
+                            searchQuery = "";
+                          });
+                        },
+                      )
                     : null,
               ),
             ),
           ),
           IconButton(
             padding: EdgeInsets.only(right: 16),
-            icon: Icon(Icons.filter_list, color: isDarkMode ? Colors.white : Colors.black),
+            icon: Icon(Icons.filter_list,
+                color: isDarkMode ? Colors.white : Colors.black),
             onPressed: _showFilterOptions,
           ),
         ],
@@ -215,7 +226,10 @@ class HomeScreenState extends State<HomeScreen> {
                         height: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: selectedSport == sport ? Colors.green : Colors.grey),
+                          border: Border.all(
+                              color: selectedSport == sport
+                                  ? Colors.green
+                                  : Colors.grey),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -224,13 +238,17 @@ class HomeScreenState extends State<HomeScreen> {
                               'assets/$sport.png',
                               width: 50,
                               height: 50,
-                              color: selectedSport == sport ? Colors.green : Colors.grey,
+                              color: selectedSport == sport
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                             const SizedBox(height: 20),
                             Text(
                               sport,
                               style: TextStyle(
-                                color: selectedSport == sport ? Colors.green : Colors.grey,
+                                color: selectedSport == sport
+                                    ? Colors.green
+                                    : Colors.grey,
                                 fontFamily: 'Exo2',
                               ),
                             ),
@@ -264,8 +282,10 @@ class HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _getFilteredArenas() {
     List<Map<String, dynamic>> filteredArenas = arenas.where((arena) {
       final nameMatches = arena['name'].toLowerCase().contains(searchQuery);
-      final locationMatches = arena['location'].toLowerCase().contains(searchQuery);
-      final sportMatches = selectedSport == null || arena['sport'] == selectedSport;
+      final locationMatches =
+          arena['location'].toLowerCase().contains(searchQuery);
+      final sportMatches =
+          selectedSport == null || arena['sport'] == selectedSport;
 
       return (nameMatches || locationMatches) && sportMatches;
     }).toList();
@@ -275,7 +295,9 @@ class HomeScreenState extends State<HomeScreen> {
       final priceA = int.parse(a['price'].replaceAll(RegExp(r'[^0-9]'), ''));
       final priceB = int.parse(b['price'].replaceAll(RegExp(r'[^0-9]'), ''));
 
-      return sortAscending ? priceA.compareTo(priceB) : priceB.compareTo(priceA);
+      return sortAscending
+          ? priceA.compareTo(priceB)
+          : priceB.compareTo(priceA);
     });
 
     return filteredArenas;
@@ -324,7 +346,8 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildArenaCard(BuildContext context, Map<String, dynamic> arena, bool isDarkMode) {
+  Widget _buildArenaCard(
+      BuildContext context, Map<String, dynamic> arena, bool isDarkMode) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -355,7 +378,8 @@ class HomeScreenState extends State<HomeScreen> {
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(12),
@@ -433,9 +457,12 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: arena['availability'] == 'Limited Slots' ? Colors.red : Colors.blue,
+                          color: arena['availability'] == 'Limited Slots'
+                              ? Colors.red
+                              : Colors.blue,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(

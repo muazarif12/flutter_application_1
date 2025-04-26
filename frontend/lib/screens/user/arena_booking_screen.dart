@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 import 'checkout_screen.dart'; // Import CheckoutScreen
 
 class ArenaBookingScreen extends StatefulWidget {
@@ -28,7 +28,13 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
 
   // Dummy data for sports and slots
   final List<String> _sports = ['Cricket', 'Football', 'Tennis'];
-  final List<String> _availableSlots = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM', '6:00 PM'];
+  final List<String> _availableSlots = [
+    '10:00 AM',
+    '12:00 PM',
+    '2:00 PM',
+    '4:00 PM',
+    '6:00 PM'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +51,21 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,color: isDarkMode? Colors.white:Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,
+              color: isDarkMode ? Colors.white : Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
-        ) ,
+        ),
         centerTitle: true,
         forceMaterialTransparency: true,
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
         title: Text(
           'Book ${widget.arena['name']}',
-          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode? Colors.white:Colors.black),
+          style: TextStyle(
+              fontFamily: 'Exo2',
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -70,9 +80,11 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 title: 'Personal Details',
                 child: Column(
                   children: [
-                    _textField(_nameController, 'Name', Icons.person, isDarkMode),
+                    _textField(
+                        _nameController, 'Name', Icons.person, isDarkMode),
                     const SizedBox(height: 12),
-                    _textField(_contactController, 'Contact', Icons.phone,isDarkMode),
+                    _textField(
+                        _contactController, 'Contact', Icons.phone, isDarkMode),
                   ],
                 ),
               ),
@@ -130,7 +142,8 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                       value: _teamSize,
                       label: 'Team Size',
                       icon: Icons.groups,
-                      items: List.generate(10, (index) => (index + 1).toString()),
+                      items:
+                          List.generate(10, (index) => (index + 1).toString()),
                       onChanged: (value) {
                         setState(() {
                           _teamSize = int.tryParse(value!);
@@ -160,7 +173,10 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 title: 'Additional Preferences',
                 child: CheckboxListTile(
                   activeColor: Colors.green,
-                  title: Text('Send request for teammates', style: TextStyle(fontFamily: 'Exo2',color: isDarkMode?Colors.white:Colors.black)),
+                  title: Text('Send request for teammates',
+                      style: TextStyle(
+                          fontFamily: 'Exo2',
+                          color: isDarkMode ? Colors.white : Colors.black)),
                   value: _sendTeammateRequest,
                   onChanged: (value) {
                     setState(() {
@@ -179,11 +195,16 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                   icon: const Icon(Icons.check_circle),
                   label: const Text(
                     'Book Now',
-                    style: TextStyle(fontFamily: 'Exo2', fontSize: 16, fontWeight: FontWeight.bold,),
+                    style: TextStyle(
+                      fontFamily: 'Exo2',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -200,9 +221,12 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
   }
 
   // **Reusable Card Wrapper**
-  Widget _card({required String title, required Widget child, required bool isDarkMode}) {
+  Widget _card(
+      {required String title,
+      required Widget child,
+      required bool isDarkMode}) {
     return Card(
-      color: isDarkMode? Colors.grey[850]: Colors.white,
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -211,7 +235,12 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black)),
+            Text(title,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white : Colors.black)),
             const Divider(),
             child,
           ],
@@ -220,22 +249,31 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
     );
   }
 
-  Widget _toggleSwitch({
-    required String label,
-    required bool value,
-    required Function(bool) onChanged,
-    required String activeText,
-    required String inactiveText,
-    required bool isDarkMode
-  }) {
+  Widget _toggleSwitch(
+      {required String label,
+      required bool value,
+      required Function(bool) onChanged,
+      required String activeText,
+      required String inactiveText,
+      required bool isDarkMode}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white:Colors.black)),
+        Text(label,
+            style: TextStyle(
+                fontFamily: 'Exo2',
+                color: isDarkMode ? Colors.white : Colors.black)),
         Row(
           children: [
-            Text(value ? activeText : inactiveText, style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white:Colors.black)),
-            Switch(value: value, onChanged: onChanged, activeColor: Colors.green,),
+            Text(value ? activeText : inactiveText,
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: Colors.green,
+            ),
           ],
         ),
       ],
@@ -243,18 +281,25 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
   }
 
   // **Reusable Text Field**
-  Widget _textField(TextEditingController controller, String label, IconData icon, bool isDarkMode) {
+  Widget _textField(TextEditingController controller, String label,
+      IconData icon, bool isDarkMode) {
     return TextFormField(
-
       controller: controller,
-      style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
+      style: TextStyle(
+          fontFamily: 'Exo2', color: isDarkMode ? Colors.white : Colors.black),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color: Colors.green ,),
+        labelStyle: TextStyle(
+            fontFamily: 'Exo2',
+            color: isDarkMode ? Colors.white : Colors.black),
+        prefixIcon: Icon(
+          icon,
+          color: Colors.green,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Please enter $label' : null,
     );
   }
 
@@ -268,31 +313,46 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
     required bool isDarkMode,
   }) {
     return DropdownButtonFormField<String>(
-      dropdownColor: isDarkMode? Colors.black: Colors.white,
-      style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
+      dropdownColor: isDarkMode ? Colors.black : Colors.white,
+      style: TextStyle(
+          fontFamily: 'Exo2', color: isDarkMode ? Colors.white : Colors.black),
       value: value?.toString(),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(icon, color: Colors.green,),
+        labelStyle: TextStyle(
+            fontFamily: 'Exo2',
+            color: isDarkMode ? Colors.white : Colors.black),
+        prefixIcon: Icon(
+          icon,
+          color: Colors.green,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
       onChanged: onChanged,
-      validator: (value) => value == null || value.isEmpty ? 'Please select $label' : null,
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Please select $label' : null,
     );
   }
 
   // **Date Picker Field**
   Widget _datePickerField(bool isDarkMode) {
     return TextFormField(
-      style: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
+      style: TextStyle(
+          fontFamily: 'Exo2', color: isDarkMode ? Colors.white : Colors.black),
       controller: _dateController,
       readOnly: true,
       decoration: InputDecoration(
         labelText: 'Select Date',
-        labelStyle: TextStyle(fontFamily: 'Exo2', color: isDarkMode? Colors.white : Colors.black),
-        prefixIcon: Icon(Icons.calendar_today, color: Colors.green,),
+        labelStyle: TextStyle(
+            fontFamily: 'Exo2',
+            color: isDarkMode ? Colors.white : Colors.black),
+        prefixIcon: Icon(
+          Icons.calendar_today,
+          color: Colors.green,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onTap: () async {
@@ -305,11 +365,13 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         if (pickedDate != null) {
           setState(() {
             _selectedDate = pickedDate;
-            _dateController.text = pickedDate.toLocal().toString().split(' ')[0];
+            _dateController.text =
+                pickedDate.toLocal().toString().split(' ')[0];
           });
         }
       },
-      validator: (value) => _selectedDate == null ? 'Please select a date' : null,
+      validator: (value) =>
+          _selectedDate == null ? 'Please select a date' : null,
     );
   }
 

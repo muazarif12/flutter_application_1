@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class BookingsScreen extends StatefulWidget {
   @override
   _BookingsScreenState createState() => _BookingsScreenState();
 }
 
-class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProviderStateMixin {
+class _BookingsScreenState extends State<BookingsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   // Dummy booking data
@@ -69,12 +70,14 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
     final List<Map<String, dynamic>> upcomingBookings = _bookings
         .where((booking) => booking['date'].isAfter(DateTime.now()))
         .toList()
-      ..sort((a, b) => b['date'].compareTo(a['date'])); // Reverse chronological order
+      ..sort((a, b) =>
+          b['date'].compareTo(a['date'])); // Reverse chronological order
 
     final List<Map<String, dynamic>> pastBookings = _bookings
         .where((booking) => booking['date'].isBefore(DateTime.now()))
         .toList()
-      ..sort((a, b) => b['date'].compareTo(a['date'])); // Reverse chronological order
+      ..sort((a, b) =>
+          b['date'].compareTo(a['date'])); // Reverse chronological order
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -96,7 +99,8 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
           indicatorColor: Colors.green,
           labelColor: Colors.green,
           unselectedLabelColor: isDarkMode ? Colors.white70 : Colors.black45,
-          labelStyle: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold),
+          labelStyle:
+              TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold),
           tabs: const [
             Tab(text: "Current"),
             Tab(text: "History"),
@@ -113,7 +117,8 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildBookingList(List<Map<String, dynamic>> bookings, bool isDarkMode, bool isUpcoming) {
+  Widget _buildBookingList(
+      List<Map<String, dynamic>> bookings, bool isDarkMode, bool isUpcoming) {
     if (bookings.isEmpty) {
       return Center(
         child: Text(
@@ -136,7 +141,8 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildBookingItem(Map<String, dynamic> booking, bool isDarkMode, bool isUpcoming) {
+  Widget _buildBookingItem(
+      Map<String, dynamic> booking, bool isDarkMode, bool isUpcoming) {
     return Card(
       color: isDarkMode ? Colors.grey[900] : Colors.white,
       elevation: 3,
@@ -145,41 +151,77 @@ class _BookingsScreenState extends State<BookingsScreen> with SingleTickerProvid
       child: ExpansionTile(
         title: Text(
           booking['arenaName'],
-          style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
+          style: TextStyle(
+              fontFamily: 'Exo2',
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black),
         ),
         subtitle: Text(
           "${booking['sport']} - ${booking['date'].toLocal().toString().split(' ')[0]} at ${booking['slot']}",
-          style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54, fontFamily: 'Exo2'),
+          style: TextStyle(
+              color: isDarkMode ? Colors.white70 : Colors.black54,
+              fontFamily: 'Exo2'),
         ),
         children: [
           ListTile(
-            title: Text("Team Size", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-            subtitle: Text("${booking['teamSize']} players", style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
+            title: Text("Team Size",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            subtitle: Text("${booking['teamSize']} players",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Court Type", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-            subtitle: Text(booking['isHalfCourt'] ? "Half Court" : "Full Court", style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
+            title: Text("Court Type",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            subtitle: Text(booking['isHalfCourt'] ? "Half Court" : "Full Court",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Payment Method", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-            subtitle: Text(booking['paymentMethod'], style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
+            title: Text("Payment Method",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            subtitle: Text(booking['paymentMethod'],
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           ListTile(
-            title: Text("Amount Paid", style: TextStyle(fontFamily: 'Exo2', fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-            subtitle: Text(booking['amountPaid'], style: TextStyle(fontFamily: 'Exo2', color: isDarkMode ? Colors.white70 : Colors.black54)),
+            title: Text("Amount Paid",
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black)),
+            subtitle: Text(booking['amountPaid'],
+                style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: isDarkMode ? Colors.white70 : Colors.black54)),
           ),
           if (isUpcoming)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
               child: ElevatedButton(
                 onPressed: () {
                   _cancelBooking(booking);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
-                child: Text("Cancel Booking", style: TextStyle(color: Colors.white, fontFamily: 'Exo2')),
+                child: Text("Cancel Booking",
+                    style: TextStyle(color: Colors.white, fontFamily: 'Exo2')),
               ),
             ),
         ],

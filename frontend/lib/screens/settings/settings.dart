@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_event.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_event.dart';
+import '../../bloc/theme/theme_state.dart';
 
-class HostSettingsScreen extends StatelessWidget {
-  const HostSettingsScreen({super.key});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +43,14 @@ class HostSettingsScreen extends StatelessWidget {
               style: TextStyle(
                   fontSize: 16,
                   color: isDarkMode ? Colors.white : Colors.black,
-                  fontFamily: 'Exo2'
-              ),
+                  fontFamily: 'Exo2'),
             ),
             Text(
               'user@gmail.com',
               style: TextStyle(
                   fontSize: 16,
                   color: isDarkMode ? Colors.white : Colors.black,
-                  fontFamily: 'Exo2'
-              ),
+                  fontFamily: 'Exo2'),
             ),
             const SizedBox(height: 50),
             _buildSettingsOption(
@@ -105,10 +103,10 @@ class HostSettingsScreen extends StatelessWidget {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDarkMode ? Colors.white : Colors.black,
-                    fontFamily: 'Exo2'
-                ),
+                    fontFamily: 'Exo2'),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: Colors.grey),
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/login');
               },
@@ -133,14 +131,17 @@ class HostSettingsScreen extends StatelessWidget {
         style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDarkMode ? Colors.white : Colors.black,
-            fontFamily: 'Exo2'
-        ),
+            fontFamily: 'Exo2'),
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(color: Colors.grey, fontFamily: 'Exo2',),
+        style: const TextStyle(
+          color: Colors.grey,
+          fontFamily: 'Exo2',
+        ),
       ),
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: () {},
     );
   }

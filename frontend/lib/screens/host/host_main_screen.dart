@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/theme/theme_bloc.dart';
-import '../bloc/theme/theme_state.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_state.dart';
 import 'host_listings_screen.dart';
 import 'host_dashboard_screen.dart';
 import 'host_calendar_screen.dart';
@@ -26,9 +26,9 @@ class HostMainScreenState extends State<HostMainScreen> {
   void initState() {
     super.initState();
     _screens = [
-     const HostListingsScreen(), // Hosts manage their arenas
-     const HostDashboardScreen(), // Hosts see bookings overview
-     const HostCalendarScreen(), // Hosts manage calendar
+      const HostListingsScreen(), // Hosts manage their arenas
+      const HostDashboardScreen(), // Hosts see bookings overview
+      const HostCalendarScreen(), // Hosts manage calendar
       // const HostMessagesScreen(), // Chat with customers
       const HostSettingsScreen(), // Settings & payouts
     ];
@@ -65,11 +65,15 @@ class HostMainScreenState extends State<HostMainScreen> {
             });
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: "Listings"),
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Calendar"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.sports_soccer), label: "Listings"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.dashboard), label: "Dashboard"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today), label: "Calendar"),
             // BottomNavigationBarItem(icon: Icon(Icons.message), label: "Messages"),
-            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: "Settings"),
           ],
         ),
       ),
