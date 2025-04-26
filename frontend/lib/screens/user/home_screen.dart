@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart'; // For date formatting
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import 'arena_details_screen.dart';
@@ -60,24 +61,40 @@ class HomeScreenState extends State<HomeScreen> {
     },
   ];
 
+  // List of available areas
+  final List<String> areas = [
+    'All Areas',
+    'Gulistan-e-Jauhar',
+    'Gulshan Iqbal',
+    'DHA',
+    'Clifton',
+    'North Nazimabad',
+  ];
+
   String? selectedSport;
   bool sortAscending = true;
-  TextEditingController searchController =
-      TextEditingController(); // ✅ Search Controller
-  String searchQuery =
-      ""; // Flag to track sorting order (ascending or descending)
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = "";
+
+  // Advanced search parameters
+  String selectedArea = 'All Areas';
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+  int teamSize = 5; // Default team size
+  RangeValues priceRange = const RangeValues(300, 500); // Rs. 300 to Rs. 500
+  bool showAdvancedSearch = false;
 
   @override
   void initState() {
     super.initState();
-    _showLocationDialog(); // ✅ Ask for location when screen loads
+    _showLocationDialog();
   }
 
   void _showLocationDialog() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
-        barrierDismissible: false, // Prevents closing without selection
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text("Enable Location"),
@@ -87,14 +104,14 @@ class HomeScreenState extends State<HomeScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close dialog without enabling
+                  Navigator.pop(context);
                 },
                 child: const Text("No, Thanks"),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  _requestLocationPermission(); // ✅ Request location
+                  Navigator.pop(context);
+                  _requestLocationPermission();
                 },
                 child: const Text("Allow"),
               ),
@@ -105,7 +122,6 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // ✅ Function to request location permission
   Future<void> _requestLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -115,11 +131,10 @@ class HomeScreenState extends State<HomeScreen> {
 
     if (permission == LocationPermission.whileInUse ||
         permission == LocationPermission.always) {
-      _getCurrentLocation(); // ✅ Get user's location
+      _getCurrentLocation();
     }
   }
 
-  // ✅ Function to get user's current location
   Future<void> _getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -133,12 +148,48 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Method to show date picker
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 30)),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  // Method to show time picker
+  Future<void> _selectTime(BuildContext context) async {
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a date first')),
+      );
+      return;
+    }
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime ?? TimeOfDay.now(),
+    );
+
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeState = context.watch<ThemeBloc>().state;
     final bool isDarkMode = themeState is DarkThemeState;
 
-    // Ensure system UI updates when navigating to this screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) {
         context.read<ThemeBloc>().setSystemUI();
@@ -158,10 +209,10 @@ class HomeScreenState extends State<HomeScreen> {
                 const EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 16),
             width: MediaQuery.of(context).size.width * 0.8,
             child: TextField(
-              controller: searchController, // ✅ Connect Controller
+              controller: searchController,
               onChanged: (query) {
                 setState(() {
-                  searchQuery = query.toLowerCase(); // ✅ Update search query
+                  searchQuery = query.toLowerCase();
                 });
               },
               decoration: InputDecoration(
@@ -191,10 +242,16 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           IconButton(
-            padding: EdgeInsets.only(right: 16),
-            icon: Icon(Icons.filter_list,
-                color: isDarkMode ? Colors.white : Colors.black),
-            onPressed: _showFilterOptions,
+            padding: const EdgeInsets.only(right: 16),
+            icon: Icon(
+              showAdvancedSearch ? Icons.close : Icons.filter_list,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                showAdvancedSearch = !showAdvancedSearch;
+              });
+            },
           ),
         ],
       ),
@@ -203,6 +260,9 @@ class HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Advanced Search Panel
+            if (showAdvancedSearch) _buildAdvancedSearchPanel(isDarkMode),
+
             // Horizontal sports scroll view
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -211,7 +271,6 @@ class HomeScreenState extends State<HomeScreen> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        // If the selected sport is tapped again, show all arenas
                         if (selectedSport == sport) {
                           selectedSport = null;
                         } else {
@@ -262,7 +321,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Filtered Arena List based on selected sport
+            // Filtered Arena List
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -278,16 +337,367 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Function to get arenas after applying search and sport filters
+  // Advanced Search Panel Widget
+  Widget _buildAdvancedSearchPanel(bool isDarkMode) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[850] : Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Advanced Search',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontFamily: 'Exo2',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Area Selection
+          Text(
+            'Area',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontFamily: 'Exo2',
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey[800] : Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                isExpanded: true,
+                value: selectedArea,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontFamily: 'Exo2',
+                ),
+                dropdownColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                items: areas.map((String area) {
+                  return DropdownMenuItem<String>(
+                    value: area,
+                    child: Text(area),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      selectedArea = newValue;
+                    });
+                  }
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Date & Time Selection
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Date',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontFamily: 'Exo2',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: isDarkMode ? Colors.grey[800] : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedDate == null
+                                  ? 'Select Date'
+                                  : DateFormat('MMM dd, yyyy')
+                                      .format(selectedDate!),
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                            Icon(
+                              Icons.calendar_today,
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              size: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Time',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontFamily: 'Exo2',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () => _selectTime(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: isDarkMode ? Colors.grey[800] : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: selectedDate == null
+                                ? Colors.grey.withOpacity(0.5)
+                                : Colors.grey,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedTime == null
+                                  ? 'Select Time'
+                                  : selectedTime!.format(context),
+                              style: TextStyle(
+                                color: selectedDate == null
+                                    ? (isDarkMode
+                                        ? Colors.grey
+                                        : Colors.grey[600])
+                                    : (isDarkMode
+                                        ? Colors.white
+                                        : Colors.black),
+                                fontFamily: 'Exo2',
+                              ),
+                            ),
+                            Icon(
+                              Icons.access_time,
+                              color: selectedDate == null
+                                  ? Colors.grey
+                                  : (isDarkMode ? Colors.white : Colors.black),
+                              size: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Team Size Selector
+          Text(
+            'Team Size: $teamSize players',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontFamily: 'Exo2',
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  if (teamSize > 1) {
+                    setState(() {
+                      teamSize--;
+                    });
+                  }
+                },
+                icon: Icon(
+                  Icons.remove_circle,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              Expanded(
+                child: Slider(
+                  value: teamSize.toDouble(),
+                  min: 1,
+                  max: 11,
+                  divisions: 10,
+                  activeColor: Colors.green,
+                  inactiveColor: Colors.grey,
+                  onChanged: (value) {
+                    setState(() {
+                      teamSize = value.toInt();
+                    });
+                  },
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  if (teamSize < 11) {
+                    setState(() {
+                      teamSize++;
+                    });
+                  }
+                },
+                icon: Icon(
+                  Icons.add_circle,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Price Range Slider
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Price Range',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontFamily: 'Exo2',
+                ),
+              ),
+              Text(
+                'Rs. ${priceRange.start.toInt()} - Rs. ${priceRange.end.toInt()}',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontFamily: 'Exo2',
+                ),
+              ),
+            ],
+          ),
+          RangeSlider(
+            values: priceRange,
+            min: 100,
+            max: 1000,
+            divisions: 18,
+            activeColor: Colors.green,
+            inactiveColor: Colors.grey,
+            labels: RangeLabels(
+              'Rs. ${priceRange.start.toInt()}',
+              'Rs. ${priceRange.end.toInt()}',
+            ),
+            onChanged: (RangeValues values) {
+              setState(() {
+                priceRange = values;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Apply Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                // Apply filters and close the advanced search panel
+                setState(() {
+                  showAdvancedSearch = false;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Apply Filters',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Exo2',
+                ),
+              ),
+            ),
+          ),
+
+          // Reset Button
+          TextButton(
+            onPressed: () {
+              setState(() {
+                // Reset all advanced search filters
+                selectedArea = 'All Areas';
+                selectedDate = null;
+                selectedTime = null;
+                teamSize = 5;
+                priceRange = const RangeValues(300, 500);
+              });
+            },
+            child: Center(
+              child: Text(
+                'Reset All Filters',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontFamily: 'Exo2',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Function to get filtered arenas based on all filters
   List<Map<String, dynamic>> _getFilteredArenas() {
     List<Map<String, dynamic>> filteredArenas = arenas.where((arena) {
+      // Basic text search
       final nameMatches = arena['name'].toLowerCase().contains(searchQuery);
       final locationMatches =
           arena['location'].toLowerCase().contains(searchQuery);
+
+      // Sport filter
       final sportMatches =
           selectedSport == null || arena['sport'] == selectedSport;
 
-      return (nameMatches || locationMatches) && sportMatches;
+      // Area filter (if "All Areas" is selected, don't filter by area)
+      final areaMatches = selectedArea == 'All Areas' ||
+          arena['location'].contains(selectedArea);
+
+      // Price filter (extract numeric price value from string)
+      final priceValue =
+          int.parse(arena['price'].replaceAll(RegExp(r'[^0-9]'), ''));
+      final priceMatches =
+          priceValue >= priceRange.start && priceValue <= priceRange.end;
+
+      return (nameMatches || locationMatches) &&
+          sportMatches &&
+          areaMatches &&
+          priceMatches;
     }).toList();
 
     // Sort the filtered arenas by price
@@ -303,7 +713,7 @@ class HomeScreenState extends State<HomeScreen> {
     return filteredArenas;
   }
 
-  // Function to show the filter options dialog
+  // Function to show the filter options dialog (price sorting)
   void _showFilterOptions() {
     showDialog(
       context: context,
@@ -414,7 +824,8 @@ class HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.blue, size: 16),
+                      const Icon(Icons.location_on,
+                          color: Colors.blue, size: 16),
                       Text(
                         arena['location'],
                         style: const TextStyle(
