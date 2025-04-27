@@ -12,7 +12,7 @@ class HostCalendarScreen extends StatefulWidget {
 class HostCalendarScreenState extends State<HostCalendarScreen> {
   CalendarView _viewMode = CalendarView.month;
   int _visibleDays = 7;
-  String? _selectedArena;
+  late String _selectedArena; // Using late keyword to initialize in initState
   Key _calendarKey = UniqueKey();
   Set<DateTime> _countedDays = Set();
 
@@ -75,32 +75,40 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Set the default selected arena to the first one in the list
+    _selectedArena = _getUniqueArenas().first;
+  }
+
+  // Helper method to get unique arena names
+  List<String> _getUniqueArenas() {
+    return _bookings.map((b) => b['arena'] as String).toSet().toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         forceMaterialTransparency: true,
         actions: [
-          // Dropdown for selecting different arenas
+          // Dropdown for selecting different arenas - now always requires a selection
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: DropdownButton<String>(
               value: _selectedArena,
-              hint: const Text("Filter by Arena"),
-              items: [
-                const DropdownMenuItem(value: null, child: Text("All Arenas")),
-                ..._bookings
-                    .map((b) => b['arena'] as String)
-                    .toSet()
-                    .map((arena) {
-                  return DropdownMenuItem(value: arena, child: Text(arena));
-                }),
-              ],
+              hint: const Text("Select Arena"),
+              items: _getUniqueArenas().map((arena) {
+                return DropdownMenuItem(value: arena, child: Text(arena));
+              }).toList(),
               onChanged: (value) {
-                setState(() {
-                  _selectedArena = value;
-                  _calendarKey = UniqueKey(); // Force Calendar Refresh
-                });
+                if (value != null) {
+                  setState(() {
+                    _selectedArena = value;
+                    _calendarKey = UniqueKey(); // Force Calendar Refresh
+                  });
+                }
               },
             ),
           ),
@@ -242,7 +250,7 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
     }).toList();
   }
 
-// Build a half-width appointment widget
+  // Build a half-width appointment widget
   Widget _buildHalfCourtAppointment(Appointment appointment,
       {required bool isLeft}) {
     return Container(
@@ -262,19 +270,20 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
 
   // Count appointments for a specific day
   int _countAppointmentsForDay(DateTime date) {
-    // Count appointments for the given date
+    // Count appointments for the given date and the selected arena only
     return _bookings.where((booking) {
       return booking['date'].year == date.year &&
           booking['date'].month == date.month &&
-          booking['date'].day == date.day;
+          booking['date'].day == date.day &&
+          booking['arena'] == _selectedArena;
     }).length; // Return the number of appointments for that day
   }
 
-  // Convert bookings to calendar appointments
+  // Convert bookings to calendar appointments - always filter by selected arena
   List<Appointment> _getCalendarAppointments() {
-    List<Map<String, dynamic>> filteredBookings = _selectedArena == null
-        ? _bookings // Show all bookings if no filter
-        : _bookings.where((b) => b['arena'] == _selectedArena).toList();
+    // Always filter bookings by the selected arena
+    List<Map<String, dynamic>> filteredBookings =
+        _bookings.where((b) => b['arena'] == _selectedArena).toList();
 
     return filteredBookings.map((booking) {
       DateTime slotTime = booking['date'];
@@ -337,10 +346,18 @@ class HostCalendarScreenState extends State<HostCalendarScreen> {
   }
 
   void _editSlot(Appointment appointment) {
+    // Extract the arena name from the appointment subject
+    // For half-court bookings, remove the (1/2) suffix
+    String appointmentArenaName = appointment.subject.replaceAll(" (1/2)", "");
+
     Map<String, dynamic>? slot = _bookings.firstWhere(
       (b) =>
-          b['date'] == appointment.startTime &&
-          b['arena'] == appointment.subject,
+          b['date'].year == appointment.startTime.year &&
+          b['date'].month == appointment.startTime.month &&
+          b['date'].day == appointment.startTime.day &&
+          b['date'].hour == appointment.startTime.hour &&
+          b['date'].minute == appointment.startTime.minute &&
+          b['arena'] == appointmentArenaName,
       orElse: () => {},
     );
 
