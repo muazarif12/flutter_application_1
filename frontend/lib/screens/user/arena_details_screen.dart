@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart';
 import 'arena_booking_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -17,34 +18,34 @@ class ArenaDetailsScreen extends StatelessWidget {
     final bool isDarkMode = themeState is DarkThemeState;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray, // Background color
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.electricBlue), // Electric Blue icon
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         centerTitle: true,
         forceMaterialTransparency: true,
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray, // AppBar color
         title: Text(
           arena['name'],
           style: TextStyle(
               fontFamily: 'Exo2',
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.blue),
+              color: AppColors.electricBlue), // Electric Blue text
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.share, color: Colors.blue),
+            icon: Icon(Icons.share, color: AppColors.electricBlue), // Electric Blue icon
             onPressed: () {
               _shareArena(context);
             },
           ),
           IconButton(
-            icon: Icon(Icons.favorite_border, color: Colors.blue),
+            icon: Icon(Icons.favorite_border, color: AppColors.electricBlue), // Electric Blue icon
             onPressed: () {
               _addToFavorites(context);
             },
@@ -97,10 +98,10 @@ class ArenaDetailsScreen extends StatelessWidget {
                   const Icon(Icons.star_half_outlined,
                       color: Colors.amber, size: 24),
                   const SizedBox(width: 8),
-                  // Text(
-                  //   arena['rating'].toString(),
-                  //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black),
-                  // ),
+                  Text(
+                    arena['rating'].toString(),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.slateGray),
+                  ),
                 ],
               ),
             ),
@@ -119,19 +120,19 @@ class ArenaDetailsScreen extends StatelessWidget {
                     },
                     child: Text(
                       arena['location'],
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 16,
-                          color: Colors.blue,
+                          color: AppColors.electricBlue,
                           decoration: TextDecoration.underline),
                     ),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: () => _openGoogleMaps(arena['location']),
-                    icon: Icon(Icons.map, color: Colors.blue),
+                    icon: Icon(Icons.map, color: AppColors.electricBlue),
                     label: Text(
                       "Open in Maps",
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(color: AppColors.electricBlue),
                     ),
                   ),
                 ],
@@ -146,20 +147,20 @@ class ArenaDetailsScreen extends StatelessWidget {
               title: 'Description',
               child: Text(
                   'This is a great place for sports lovers. The owner is John Doe.',
-                  style: TextStyle(color: Colors.blue)),
+                  style: TextStyle(color: AppColors.slateGray)),
             ),
             _card(
               isDarkMode: isDarkMode,
               title: 'Timings & Pricing',
               child: Text(
                   'Open: 9:00 AM - 10:00 PM\nPrice: Rs. 400/hr\nPer Day Cost: Rs. 3000',
-                  style: TextStyle(color: Colors.blue)),
+                  style: TextStyle(color: AppColors.slateGray)),
             ),
             _card(
               isDarkMode: isDarkMode,
               title: 'Pricing Details',
               child: Text('Pre-Tax: Rs. 400/hr\nPost-Tax: Rs. 450/hr',
-                  style: TextStyle(color: Colors.blue)),
+                  style: TextStyle(color: AppColors.slateGray)),
             ),
 
             const SizedBox(height: 16),
@@ -173,24 +174,24 @@ class ArenaDetailsScreen extends StatelessWidget {
                 children: [
                   Chip(
                       label: Text(
-                    'Cafeteria',
-                    style: TextStyle(color: Colors.blue),
-                  )),
+                        'Cafeteria',
+                        style: TextStyle(color: AppColors.electricBlue),
+                      )),
                   Chip(
                       label: Text(
-                    'Showers',
-                    style: TextStyle(color: Colors.blue),
-                  )),
+                        'Showers',
+                        style: TextStyle(color: AppColors.electricBlue),
+                      )),
                   Chip(
                       label: Text(
-                    'Parking',
-                    style: TextStyle(color: Colors.blue),
-                  )),
+                        'Parking',
+                        style: TextStyle(color: AppColors.electricBlue),
+                      )),
                   Chip(
                       label: Text(
-                    'Wi-Fi',
-                    style: TextStyle(color: Colors.blue),
-                  )),
+                        'Wi-Fi',
+                        style: TextStyle(color: AppColors.electricBlue),
+                      )),
                 ],
               ),
             ),
@@ -219,24 +220,23 @@ class ArenaDetailsScreen extends StatelessWidget {
               title: 'Cancellation Policy',
               child: Text(
                   'Cancellations must be made 24 hours before the booking time.',
-                  style: TextStyle(color: Colors.blue)),
+                  style: TextStyle(color: AppColors.slateGray)),
             ),
 
             const SizedBox(height: 16),
 
             // **Support & Booking Options**
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: Icon(Icons.calendar_today, color: Colors.blue[900]),
+                icon: Icon(Icons.calendar_today, color: AppColors.electricBlue),
                 label: Text(
                   'Book Now',
                   style: TextStyle(
                       fontFamily: 'Exo2',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue[900]),
+                      color: AppColors.electricBlue),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -253,21 +253,19 @@ class ArenaDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
 
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: Icon(Icons.support_agent, color: Colors.blue[900]),
+                icon: Icon(Icons.support_agent, color: AppColors.electricBlue),
                 label: Text(
                   'Talk to Support',
                   style: TextStyle(
                       fontFamily: 'Exo2',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue[900]),
+                      color: AppColors.electricBlue),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -315,9 +313,9 @@ class ArenaDetailsScreen extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Exo2',
-                    color: Colors.blue)),
+                    color: AppColors.electricBlue)), // Electric Blue title
             const Divider(
-              color: Colors.blue,
+              color: AppColors.electricBlue, // Divider in Electric Blue
             ),
             child,
           ],
@@ -330,14 +328,14 @@ class ArenaDetailsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Text('$user: "$review"',
-          style: const TextStyle(fontSize: 14, color: Colors.blue)),
+          style: TextStyle(fontSize: 14, color: AppColors.slateGray)),
     );
   }
 
   // **Functions**
   void _openGoogleMaps(String location) async {
     final Uri googleMapsUrl =
-        Uri.parse('https://www.google.com/maps/search/?api=1&query=$location');
+    Uri.parse('https://www.google.com/maps/search/?api=1&query=$location');
     if (await canLaunchUrl(googleMapsUrl)) {
       await launchUrl(googleMapsUrl);
     } else {

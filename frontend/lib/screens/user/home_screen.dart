@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart';
 import 'arena_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -197,138 +198,282 @@ class HomeScreenState extends State<HomeScreen> {
     });
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: AppColors.electricBlue,
+      // backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray,  // Light Gray background
       appBar: AppBar(
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
-        toolbarHeight: 100,
+        centerTitle: false,
+        backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray,  // Light Gray AppBar
+        toolbarHeight: 120,
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
         actions: [
-          Container(
-            padding:
-                const EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 16),
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: TextField(
-              controller: searchController,
-              onChanged: (query) {
-                setState(() {
-                  searchQuery = query.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                labelStyle: const TextStyle(fontFamily: 'Exo2'),
-                hintStyle: TextStyle(color: Colors.blue, fontFamily: 'Exo2'),
-                hintText: 'Search arenas near you',
-                prefixIcon: Icon(Icons.search, color: Colors.blue),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                suffixIcon: searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear,
-                            color: isDarkMode ? Colors.white : Colors.black),
-                        onPressed: () {
-                          setState(() {
-                            searchController.clear();
-                            searchQuery = "";
-                          });
-                        },
-                      )
-                    : null,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // SizedBox(
+              //   height: 55,
+              //   width: 170,
+              //   child: ListTile(
+              //     leading: Icon(Icons.location_on_outlined),
+              //     trailing: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              Row(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.location_on_outlined, color: Colors.white),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('PECHS Block 2', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),),
+                      Text('Karachi', style: TextStyle(fontSize: 14, color: Colors.white),)
+                    ],
+                  ),
+                ],
               ),
-            ),
-          ),
-          IconButton(
-            padding: const EdgeInsets.only(right: 16),
-            icon: Icon(
-              showAdvancedSearch ? Icons.close : Icons.filter_list,
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-            onPressed: () {
-              setState(() {
-                showAdvancedSearch = !showAdvancedSearch;
-              });
-            },
+              const SizedBox(height: 10,),
+              Row(
+                children: [
+                  SizedBox(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width*0.8,
+                    child: TextField(
+
+                      cursorColor: AppColors.electricBlue,
+                      controller: searchController,
+                      onChanged: (query) {
+                        setState(() {
+                          searchQuery = query.toLowerCase();
+                        });
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelStyle: const TextStyle(fontFamily: 'Exo2'),
+                        hintStyle: TextStyle(color: AppColors.slateGray, fontFamily: 'Exo2', height: 0), // Adjust for theme
+                        hintText: 'Search arenas near you',
+                        prefixIcon: Icon(Icons.search, color: AppColors.slateGray),
+                        focusedBorder:OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Colors.white), // Border color for the search bar
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Colors.white), // Border color for the search bar
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Colors.white), // Border color for the search bar
+                        ),
+                        suffixIcon: searchQuery.isNotEmpty
+                            ? IconButton(
+                          icon: Icon(Icons.clear,
+                              color: AppColors.slateGray),
+                          onPressed: () {
+                            setState(() {
+                              searchController.clear();
+                              searchQuery = "";
+                            });
+                          },
+                        )
+                            : null,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    // padding: const EdgeInsets.only(right: 16),
+                    icon: Icon(
+                      showAdvancedSearch ? Icons.close : Icons.filter_list,
+                      color: isDarkMode ? Colors.white : AppColors.slateGray, // Adjust icon color based on theme
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showAdvancedSearch = !showAdvancedSearch;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Advanced Search Panel
-            if (showAdvancedSearch) _buildAdvancedSearchPanel(isDarkMode),
-
-            // Horizontal sports scroll view
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: ['Cricket', 'Football', 'Tennis'].map((sport) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (selectedSport == sport) {
-                          selectedSport = null;
-                        } else {
-                          selectedSport = sport;
-                        }
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: selectedSport == sport
-                                  ? Colors.blue
-                                  : Colors.grey),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/$sport.png',
-                              width: 50,
-                              height: 50,
-                              color: selectedSport == sport
-                                  ? Colors.green
-                                  : Colors.grey,
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              sport,
-                              style: TextStyle(
-                                color: selectedSport == sport
-                                    ? Colors.green
-                                    : Colors.grey,
-                                fontFamily: 'Exo2',
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20) )
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Advanced Search Panel
+              if (showAdvancedSearch) _buildAdvancedSearchPanel(isDarkMode),
+          
+              // Horizontal sports scroll view
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: ['Cricket', 'Football', 'Tennis', 'Hockey', 'Squash'].map((sport) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (selectedSport == sport) {
+                              selectedSport = null;
+                            } else {
+                              selectedSport = sport;
+                            }
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Column(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightGray,
+                                      // color: Colors.white,
+                                      borderRadius: BorderRadius.circular(100),
+                                      border: Border.all(
+                                        color: selectedSport == sport
+                                            ? AppColors.electricBlue
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'assets/$sport.png',
+                                          width: 50,
+                                          height: 50,
+                                          color: selectedSport == sport
+                                              ? AppColors.electricBlue
+                                              : AppColors.slateGray,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              Row(
+                                children: [
+                                  Text(
+                                    sport,
+                                    style: TextStyle(
+                                      color: selectedSport == sport
+                                          ? AppColors.electricBlue
+                                          : AppColors.slateGray,
+                                      fontFamily: 'Exo2',
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 0,right: 4),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              backgroundColor: Colors.white,
+                              side: BorderSide(width: 1, color: Colors.grey[400]!),
+                              shadowColor: Colors.transparent
+                          ),
+                          onPressed: (){},
+                          child: Row(
+                            children: [
+                              Text('Sort', style: TextStyle(color: AppColors.slateGray),),
+                              const SizedBox(width: 5,),
+                              Icon(Icons.arrow_drop_down)
+                            ],
+                          )
                       ),
                     ),
-                  );
-                }).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(width: 1, color: Colors.grey[400]!),
+                            shadowColor: Colors.transparent
+                          ),
+                          onPressed: (){},
+                          child: Row(
+                            children: [
+                              Text('Offers', style: TextStyle(color: AppColors.slateGray),),
+                              const SizedBox(width: 5,),
+                              Icon(Icons.arrow_drop_down)
+                            ],
+                          )
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              backgroundColor: Colors.white,
+                              side: BorderSide(width: 1, color: Colors.grey[400]!),
+                              shadowColor: Colors.transparent
+                          ),
+                          onPressed: (){},
+                          child: Row(
+                            children: [
+                              Icon(Icons.star, color: Colors.black,),
+                              const SizedBox(width: 5,),
+                              Text('Rating 4.0+', style: TextStyle(color: AppColors.slateGray),),
+                            ],
+                          )
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-
-            // Filtered Arena List
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _getFilteredArenas().length,
-              itemBuilder: (context, index) {
-                final arena = _getFilteredArenas()[index];
-                return _buildArenaCard(context, arena, isDarkMode);
-              },
-            ),
-          ],
+              const SizedBox(height: 10,),
+          
+              // Filtered Arena List
+              ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _getFilteredArenas().length,
+                itemBuilder: (context, index) {
+                  final arena = _getFilteredArenas()[index];
+                  return _buildArenaCard(context, arena, isDarkMode);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

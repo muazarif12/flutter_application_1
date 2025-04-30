@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart';
 
 class HostSettingsScreen extends StatelessWidget {
   const HostSettingsScreen({super.key});
@@ -136,6 +137,27 @@ class HostSettingsScreen extends StatelessWidget {
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
+            const SizedBox(height: 10,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton.icon(
+                  label: const Text(
+                    'Switch to User',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.electricBlue, // Electric Blue button
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/home');
+                  },
+                )
+              ],
+            )
           ],
         ),
       ),

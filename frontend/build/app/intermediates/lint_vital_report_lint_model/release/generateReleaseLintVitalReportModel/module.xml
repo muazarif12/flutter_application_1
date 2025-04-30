@@ -1,12 +1,12 @@
 <lint-module
     format="1"
-    dir="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\android\app"
+    dir="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\android\app"
     name=":app"
     type="APP"
     maven="android:app:"
     agpVersion="8.2.1"
-    buildFolder="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app"
-    bootClassPath="C:\Users\imtiaz.arif\AppData\Local\Android\sdk\platforms\android-35\android.jar;C:\Users\imtiaz.arif\AppData\Local\Android\sdk\build-tools\34.0.0\core-lambda-stubs.jar"
+    buildFolder="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app"
+    bootClassPath="C:\Users\syedb\AppData\Local\Android\Sdk\platforms\android-35\android.jar;C:\Users\syedb\AppData\Local\Android\Sdk\build-tools\34.0.0\core-lambda-stubs.jar"
     javaSourceLevel="1.8"
     compileTarget="android-35">
   <lintOptions

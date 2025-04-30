@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart'; // Add your AppColors import here
 
 class CheckoutScreen extends StatefulWidget {
   final Map<String, dynamic> bookingDetails;
@@ -37,12 +38,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final themeState = context.watch<ThemeBloc>().state;
     final bool isDarkMode = themeState is DarkThemeState;
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray, // Background color
       appBar: AppBar(
         forceMaterialTransparency: true,
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray, // AppBar color
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.electricBlue), // Electric Blue icon
           onPressed: () {
             Navigator.pop(context);
           },
@@ -53,7 +54,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               fontFamily: 'Exo2',
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.blue),
+              color: AppColors.electricBlue), // Electric Blue text
         ),
         centerTitle: true,
       ),
@@ -70,16 +71,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Column(
                   children: _paymentMethods.map((method) {
                     return RadioListTile<String>(
-                      activeColor: Colors.blue,
+                      activeColor: AppColors.electricBlue,
                       title: Row(
                         children: [
                           Icon(method['icon'],
                               size: 28,
-                              color: Colors.blue), // Placeholder icons
+                              color: AppColors.electricBlue), // Electric Blue icon
                           const SizedBox(width: 10),
                           Text(method['name'],
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.blue)),
+                              style: TextStyle(fontSize: 16, )), // Electric Blue text
                         ],
                       ),
                       value: method['name'],
@@ -149,12 +149,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.payment),
+                  icon: const Icon(Icons.payment, color: Colors.white,),
                   label: const Text(
                     'Checkout & Pay',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.electricBlue, // Electric Blue button
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -174,10 +175,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // **Reusable Card Wrapper**
-  Widget _card(
-      {required String title,
-      required Widget child,
-      required bool isDarkMode}) {
+  Widget _card({
+    required String title,
+    required Widget child,
+    required bool isDarkMode,
+  }) {
     return Card(
       elevation: 3,
       color: isDarkMode ? Colors.grey[850] : Colors.white,
@@ -192,8 +194,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue)),
-            const Divider(),
+                    color: AppColors.electricBlue)), // Electric Blue title
+            const Divider(color: AppColors.electricBlue), // Divider in Electric Blue
             child,
           ],
         ),
@@ -203,12 +205,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   // **Reusable Text Field**
   Widget _textField(
-    TextEditingController controller,
-    String label,
-    IconData icon,
-    TextInputType keyboardType, {
-    bool obscureText = false,
-  }) {
+      TextEditingController controller,
+      String label,
+      IconData icon,
+      TextInputType keyboardType, {
+        bool obscureText = false,
+      }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -217,12 +219,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         labelText: label,
         prefixIcon: Icon(
           icon,
-          color: Colors.green,
+          color: AppColors.limeGreen, // Lime Green icon
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       validator: (value) =>
-          value == null || value.isEmpty ? 'Please enter $label' : null,
+      value == null || value.isEmpty ? 'Please enter $label' : null,
     );
   }
 
@@ -234,11 +236,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title,
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.electricBlue)),
           Text(
             value,
-            style: const TextStyle(color: Colors.blue),
+            // style: TextStyle(color: AppColors.electricBlue), // Electric Blue for values
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart';
 import 'checkout_screen.dart'; // Import CheckoutScreen
 
 class ArenaBookingScreen extends StatefulWidget {
@@ -47,24 +48,25 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
         context.read<ThemeBloc>().setSystemUI();
       }
     });
+
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.blue),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.electricBlue),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         centerTitle: true,
         forceMaterialTransparency: true,
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        backgroundColor: isDarkMode ? Colors.black : AppColors.lightGray,
         title: Text(
           'Book ${widget.arena['name']}',
           style: TextStyle(
               fontFamily: 'Exo2',
               fontWeight: FontWeight.bold,
-              color: Colors.blue),
+              color: AppColors.electricBlue),
         ),
       ),
       body: SingleChildScrollView(
@@ -142,7 +144,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                       label: 'Team Size',
                       icon: Icons.groups,
                       items:
-                          List.generate(10, (index) => (index + 1).toString()),
+                      List.generate(10, (index) => (index + 1).toString()),
                       onChanged: (value) {
                         setState(() {
                           _teamSize = int.tryParse(value!);
@@ -171,7 +173,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                 isDarkMode: isDarkMode,
                 title: 'Additional Preferences',
                 child: CheckboxListTile(
-                  activeColor: Colors.blue,
+                  activeColor: AppColors.electricBlue,
                   title: Text('Send request for teammates',
                       style: TextStyle(
                           fontFamily: 'Exo2',
@@ -195,10 +197,10 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                   label: const Text(
                     'Book Now',
                     style: TextStyle(
-                      fontFamily: 'Exo2',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontFamily: 'Exo2',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.electricBlue),
                   ),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -220,10 +222,11 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
   }
 
   // **Reusable Card Wrapper**
-  Widget _card(
-      {required String title,
-      required Widget child,
-      required bool isDarkMode}) {
+  Widget _card({
+    required String title,
+    required Widget child,
+    required bool isDarkMode,
+  }) {
     return Card(
       color: isDarkMode ? Colors.grey[850] : Colors.white,
       elevation: 3,
@@ -239,7 +242,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Exo2',
-                    color: isDarkMode ? Colors.white : Colors.black)),
+                    color: AppColors.electricBlue)), // Electric Blue title
             const Divider(),
             child,
           ],
@@ -250,11 +253,11 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
 
   Widget _toggleSwitch(
       {required String label,
-      required bool value,
-      required Function(bool) onChanged,
-      required String activeText,
-      required String inactiveText,
-      required bool isDarkMode}) {
+        required bool value,
+        required Function(bool) onChanged,
+        required String activeText,
+        required String inactiveText,
+        required bool isDarkMode}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -271,7 +274,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             Switch(
               value: value,
               onChanged: onChanged,
-              activeColor: Colors.blue,
+              activeColor: AppColors.electricBlue,
             ),
           ],
         ),
@@ -293,12 +296,12 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           icon,
-          color: Colors.blue,
+          color: AppColors.vividOrange,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       validator: (value) =>
-          value == null || value.isEmpty ? 'Please enter $label' : null,
+      value == null || value.isEmpty ? 'Please enter $label' : null,
     );
   }
 
@@ -323,7 +326,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           icon,
-          color: Colors.blue,
+          color: AppColors.vividOrange,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -332,7 +335,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
           .toList(),
       onChanged: onChanged,
       validator: (value) =>
-          value == null || value.isEmpty ? 'Please select $label' : null,
+      value == null || value.isEmpty ? 'Please select $label' : null,
     );
   }
 
@@ -350,7 +353,7 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
             color: isDarkMode ? Colors.white : Colors.black),
         prefixIcon: Icon(
           Icons.calendar_today,
-          color: Colors.blue,
+          color: AppColors.vividOrange,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -365,12 +368,12 @@ class ArenaBookingScreenState extends State<ArenaBookingScreen> {
           setState(() {
             _selectedDate = pickedDate;
             _dateController.text =
-                pickedDate.toLocal().toString().split(' ')[0];
+            pickedDate.toLocal().toString().split(' ')[0];
           });
         }
       },
       validator: (value) =>
-          _selectedDate == null ? 'Please select a date' : null,
+      _selectedDate == null ? 'Please select a date' : null,
     );
   }
 

@@ -4,10 +4,10 @@
     minSdkVersion="21"
     targetSdkVersion="35"
     shrinking="true"
-    mergedManifest="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\intermediates\merged_manifest\release\AndroidManifest.xml"
-    proguardFiles="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.2.1;C:\Users\imtiaz.arif\Documents\Flutter SDK\flutter\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro"
-    partialResultsDir="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\intermediates\lint_vital_partial_results\release\out"
-    desugaredMethodsFiles="C:\Users\imtiaz.arif\.gradle\caches\transforms-3\8f30dd00439e4aa60dcf7ff9d51a830e\transformed\D8BackportedDesugaredMethods.txt">
+    mergedManifest="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\intermediates\merged_manifest\release\AndroidManifest.xml"
+    proguardFiles="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.2.1;D:\Flutter SDK\flutter\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro"
+    partialResultsDir="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\intermediates\lint_vital_partial_results\release\out"
+    desugaredMethodsFiles="C:\Users\syedb\.gradle\caches\transforms-3\cbeed27f36be1b931b959626f917aa5b\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -27,11 +27,11 @@
         value="android.app.Application" />
   </manifestPlaceholders>
   <artifact
-      classOutputs="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\intermediates\javac\release\classes;C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\tmp\kotlin-classes\release;C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\kotlinToolingMetadata;C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\intermediates\compile_and_runtime_not_namespaced_r_class_jar\release\R.jar"
+      classOutputs="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\intermediates\javac\release\classes;D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\tmp\kotlin-classes\release;D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\kotlinToolingMetadata;D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\intermediates\compile_and_runtime_not_namespaced_r_class_jar\release\R.jar"
       type="MAIN"
-      applicationId="com.example.flutter_application_1"
-      generatedSourceFolders="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\generated\ap_generated_sources\release\out"
-      generatedResourceFolders="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\app\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\imtiaz.arif\.gradle\caches\transforms-3\8f30dd00439e4aa60dcf7ff9d51a830e\transformed\D8BackportedDesugaredMethods.txt">
+      applicationId="com.example.MiniRena"
+      generatedSourceFolders="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\app\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\syedb\.gradle\caches\transforms-3\cbeed27f36be1b931b959626f917aa5b\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../colors/app_colors.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -105,22 +106,22 @@ class SettingsScreen extends StatelessWidget {
               subtitle: "Version 1.0.0",
               isDarkMode: isDarkMode,
             ),
-            ListTile(
-              leading: const Icon(Icons.business,
-                  color: Colors.blue), // Icon change here
-              title: Text(
-                "Switch to Hosting",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontFamily: 'Exo2'),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  size: 16, color: Colors.blue),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/host-home');
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.business,
+            //       color: Colors.blue), // Icon change here
+            //   title: Text(
+            //     "Switch to Hosting",
+            //     style: TextStyle(
+            //         fontWeight: FontWeight.bold,
+            //         color: isDarkMode ? Colors.white : Colors.black,
+            //         fontFamily: 'Exo2'),
+            //   ),
+            //   trailing: const Icon(Icons.arrow_forward_ios,
+            //       size: 16, color: Colors.blue),
+            //   onTap: () {
+            //     Navigator.pushReplacementNamed(context, '/host-home');
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.blue),
               title: Text(
@@ -136,6 +137,27 @@ class SettingsScreen extends StatelessWidget {
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
+            const SizedBox(height: 10,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton.icon(
+                  label: const Text(
+                    'Switch to Host',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.electricBlue, // Electric Blue button
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/host-home');
+                  },
+                )
+              ],
+            )
           ],
         ),
       ),

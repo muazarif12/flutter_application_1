@@ -3,10 +3,10 @@
     package="io.flutter.plugins.googlesignin"
     minSdkVersion="19"
     targetSdkVersion="19"
-    mergedManifest="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\release\AndroidManifest.xml"
-    proguardFiles="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\default_proguard_files\global\proguard-android.txt-8.2.1"
-    partialResultsDir="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\lint_vital_partial_results\release\out"
-    desugaredMethodsFiles="C:\Users\imtiaz.arif\.gradle\caches\transforms-3\8f30dd00439e4aa60dcf7ff9d51a830e\transformed\D8BackportedDesugaredMethods.txt">
+    mergedManifest="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\intermediates\merged_manifest\release\AndroidManifest.xml"
+    proguardFiles="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\intermediates\default_proguard_files\global\proguard-android.txt-8.2.1"
+    partialResultsDir="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\intermediates\lint_vital_partial_results\release\out"
+    desugaredMethodsFiles="C:\Users\syedb\.gradle\caches\transforms-3\cbeed27f36be1b931b959626f917aa5b\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -21,11 +21,11 @@
   <testFixturesSourceProviders>
   </testFixturesSourceProviders>
   <artifact
-      classOutputs="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\javac\release\classes;C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\intermediates\compile_r_class_jar\release\R.jar"
+      classOutputs="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\intermediates\javac\release\classes;D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\intermediates\compile_r_class_jar\release\R.jar"
       type="MAIN"
       applicationId="io.flutter.plugins.googlesignin"
-      generatedSourceFolders="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\generated\ap_generated_sources\release\out"
-      generatedResourceFolders="C:\Users\imtiaz.arif\mina_rena\flutter_application_1\frontend\build\google_sign_in_android\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\imtiaz.arif\.gradle\caches\transforms-3\8f30dd00439e4aa60dcf7ff9d51a830e\transformed\D8BackportedDesugaredMethods.txt">
+      generatedSourceFolders="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="D:\Visual Studio Workspace\sports\flutter_application_1\frontend\build\google_sign_in_android\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\syedb\.gradle\caches\transforms-3\cbeed27f36be1b931b959626f917aa5b\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

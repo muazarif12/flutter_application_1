@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/theme/theme_bloc.dart';
 import 'bloc/theme/theme_state.dart';
+import 'colors/app_colors.dart';
 import 'screens/intro/welcome_screen.dart';
 import 'screens/authentication/login_screen.dart';
 import 'screens/authentication/registration_screen.dart';
@@ -38,9 +39,10 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Arena Finder',
           theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+              primaryColor: AppColors.electricBlue,  // Use primary color
+              // hintColor: AppColors.vividOrange,
               useMaterial3: true,
-              fontFamily: 'Exo2'),
+              fontFamily: 'Exo2', colorScheme: ColorScheme.fromSeed(seedColor: AppColors.electricBlue).copyWith(background: AppColors.electricBlue)),
           home: const WelcomeScreen(),
           routes: {
             '/login': (context) => const LoginScreen(),
@@ -48,11 +50,11 @@ class MyApp extends StatelessWidget {
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/terms-and-conditions': (context) =>
                 const TermsAndConditionsScreen(),
-            '/home': (context) =>
-                const MainScreen(), // Use `MainScreen` for indexed navigation
+            '/home': (context) => const MainScreen(), // Use `MainScreen` for indexed navigation
             '/host-home': (context) => const HostMainScreen(),
             '/add-arena': (context) => const AddArenaScreen(),
             '/edit-arena': (context) => const EditArenaScreen(arena: {}),
+            // '/calender': (context) => const HostCa
           },
         );
       },
@@ -117,7 +119,7 @@ class MainScreenState extends State<MainScreen> {
           selectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
           unselectedLabelStyle: const TextStyle(fontFamily: 'Exo2'),
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          selectedItemColor: Colors.green,
+          selectedItemColor: AppColors.electricBlue,
           unselectedItemColor: isDarkMode ? Colors.white : Colors.black38,
           currentIndex: _currentIndex,
           onTap: (index) {
